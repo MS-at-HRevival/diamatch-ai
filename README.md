@@ -45,23 +45,11 @@ Upload GIA/IGI/HRD grading certificates, Rapaport price matrices, and supplier s
 2. Visit `http://localhost:3456`
 3. Use sample files in `sample-data/` (GIA cert PDFs + Rapaport CSV) for testing
 
-## Deploy to GitHub
+## Live demo
 
-1. Create a new **public** repository named `diamatch-ai` on GitHub
-2. Push this project:
-   ```bash
-   git remote add origin https://github.com/MS-at-HRevival/diamatch-ai.git
-   git branch -M main
-   git push -u origin main
-   ```
+**https://diamatch-ai.vercel.app**
 
-## Deploy to Vercel
-
-1. Sign in at [vercel.com](https://vercel.com) with GitHub
-2. **Add New → Project** → import `diamatch-ai`
-3. Framework preset: **Other** | Build command: *(empty)* | Output: `/`
-4. Deploy and copy your live URL (e.g. `https://diamatch-ai.vercel.app`)
-5. Update the live demo URL in this README
+GitHub: **https://github.com/MS-at-HRevival/diamatch-ai**
 
 ## Submission checklist
 
