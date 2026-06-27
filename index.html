@@ -198,9 +198,30 @@
       display: inline-block;
     }
 
+    #viewerMedia img,
+    #viewerMedia video {
+      max-width: 100%;
+      max-height: calc(100vh - 220px);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    #viewerMedia audio {
+      width: 100%;
+      margin-top: 12px;
+    }
+
     #powerTools {
       max-height: 140px;
       overflow-y: auto;
+    }
+
+    .media-placeholder {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      text-align: center;
+      padding: 2rem;
     }
   </style>
 </head>
@@ -244,12 +265,12 @@
         id="uploadZone"
         class="upload-zone mx-3 mt-3 p-4 border-2 border-dashed border-white/15 rounded-xl text-center cursor-pointer transition-all hover:border-[#00b4ff]/50"
       >
-        <input id="fileInput" type="file" accept=".pdf,.csv" multiple class="hidden" />
+        <input id="fileInput" type="file" multiple class="hidden" />
         <svg class="w-8 h-8 mx-auto mb-2 text-[#00b4ff]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
         </svg>
-        <p class="text-xs text-[#8a8a9a]">Drop GIA/IGI certs, Rapaport sheets, or stock lists</p>
-        <p class="text-xs text-[#5a5a6a] mt-1">PDF &amp; CSV · max 15 files · 20 MB each</p>
+        <p class="text-xs text-[#8a8a9a]">Certs, sheets, photos, videos &amp; more</p>
+        <p class="text-xs text-[#5a5a6a] mt-1">PDF · CSV · images · video · text · max 15 files</p>
       </div>
 
       <div id="vaultList" class="flex-1 overflow-y-auto custom-scrollbar px-3 py-2 space-y-1">
@@ -260,7 +281,7 @@
     <!-- Certificate Viewer -->
     <section class="flex-1 flex flex-col min-w-0 border-b lg:border-b-0 lg:border-r border-white/10 bg-[#0a0a0f]">
       <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between gap-2 flex-shrink-0">
-        <h2 class="text-xs font-semibold uppercase tracking-widest text-[#00b4ff]">Certificate Viewer</h2>
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-[#00b4ff]">Asset Viewer</h2>
         <div id="viewerMeta" class="text-xs text-[#8a8a9a] truncate"></div>
       </div>
       <div id="pageTabs" class="px-4 py-2 flex gap-1 flex-wrap border-b border-white/5 hidden flex-shrink-0"></div>
@@ -269,8 +290,9 @@
           <svg class="w-12 h-12 mb-4 text-[#00b4ff]/30 diamond-glow" viewBox="0 0 24 24" fill="none">
             <path d="M12 2L4 9L12 22L20 9L12 2Z" stroke="#00b4ff" stroke-width="1.5" fill="rgba(0,180,255,0.1)"/>
           </svg>
-          <p class="text-sm text-[#8a8a9a]">Select a document from The Vault to inspect</p>
+          <p class="text-sm text-[#8a8a9a]">Select a file from The Vault to inspect</p>
         </div>
+        <div id="viewerMedia" class="hidden flex flex-col items-center justify-center"></div>
         <pre id="viewerText" class="hidden text-sm text-[#e8e8ec] whitespace-pre-wrap font-mono leading-relaxed"></pre>
       </div>
     </section>
@@ -355,8 +377,42 @@ Cite [filename] for every spec referenced.">Generate marketing</button>
 
     const MAX_FILES = 15;
     const MAX_FILE_SIZE = 20 * 1024 * 1024;
+    const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
     const MAX_DOC_CHARS = 30000;
     const MAX_HISTORY_TURNS = 8;
+    const MAX_INLINE_MEDIA = 8;
+
+    const MIME_BY_EXT = {
+      pdf: 'application/pdf',
+      csv: 'text/csv',
+      txt: 'text/plain',
+      md: 'text/markdown',
+      json: 'application/json',
+      xml: 'application/xml',
+      html: 'text/html',
+      htm: 'text/html',
+      jpg: 'image/jpeg',
+      jpeg: 'image/jpeg',
+      png: 'image/png',
+      gif: 'image/gif',
+      webp: 'image/webp',
+      bmp: 'image/bmp',
+      svg: 'image/svg+xml',
+      mp4: 'video/mp4',
+      webm: 'video/webm',
+      mov: 'video/quicktime',
+      mpeg: 'video/mpeg',
+      mpg: 'video/mpeg',
+      avi: 'video/x-msvideo',
+      mp3: 'audio/mpeg',
+      wav: 'audio/wav',
+      m4a: 'audio/mp4'
+    };
+
+    const TEXT_EXTS = new Set(['csv', 'txt', 'md', 'json', 'xml', 'html', 'htm']);
+    const IMAGE_EXTS = new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg']);
+    const VIDEO_EXTS = new Set(['mp4', 'webm', 'mov', 'mpeg', 'mpg', 'avi']);
+    const AUDIO_EXTS = new Set(['mp3', 'wav', 'm4a', 'ogg', 'aac']);
 
     const SYSTEM_PROMPT = `You are an expert GIA Graduate Gemologist and Master Diamond Trader with deep knowledge of the Rapaport Price List, diamond grading, and trade valuation.
 
@@ -364,7 +420,8 @@ When analyzing uploaded documents:
 - Extract and compare technical specs: Carat, Color, Clarity, Cut, Depth%, Table%, Polish, Symmetry, Fluorescence, measurements, and proportions.
 - For layout matching, compare stones systematically and state tolerances clearly.
 - For appraisal questions, reference Rapaport matrix data when a pricing sheet is present and explain adjustments (e.g., fluorescence discounts).
-- ALWAYS cite the exact source filename in square brackets, e.g. [GIA-123456.pdf] or [rapaport-march.csv], whenever referencing document data.
+- ALWAYS cite the exact source filename in square brackets, e.g. [GIA-123456.pdf], [stone-photo.jpg], or [rapaport-march.csv], whenever referencing document or media data.
+- When images or videos are uploaded, analyze them visually for diamond characteristics, lighting, packaging, marketing quality, or certificate legibility as relevant.
 - If the user asks a general gemology question unrelated to uploaded documents (e.g., "What does eye-clean mean?"), answer from your expert knowledge without requiring a document citation.
 - Be precise, professional, and concise — you are advising B2B trade professionals.`;
 
@@ -394,6 +451,7 @@ When analyzing uploaded documents:
     const vaultEmpty = document.getElementById('vaultEmpty');
     const viewerEmpty = document.getElementById('viewerEmpty');
     const viewerText = document.getElementById('viewerText');
+    const viewerMedia = document.getElementById('viewerMedia');
     const viewerMeta = document.getElementById('viewerMeta');
     const pageTabs = document.getElementById('pageTabs');
     const chatMessages = document.getElementById('chatMessages');
@@ -439,13 +497,58 @@ When analyzing uploaded documents:
       setTimeout(() => toast.remove(), 3000);
     }
 
-    // ─── File type badge ────────────────────────────────────────────────────────
-    function inferBadge(filename) {
+    // ─── File type helpers ──────────────────────────────────────────────────────
+    function getExtension(filename) {
+      const parts = filename.split('.');
+      return parts.length > 1 ? parts.pop().toLowerCase() : '';
+    }
+
+    function getMimeType(file, ext) {
+      if (file.type) return file.type;
+      return MIME_BY_EXT[ext] || 'application/octet-stream';
+    }
+
+    function classifyFile(file) {
+      const ext = getExtension(file.name);
+      const mime = getMimeType(file, ext);
+      if (ext === 'pdf' || mime === 'application/pdf') return { category: 'pdf', ext, mime };
+      if (TEXT_EXTS.has(ext) || mime.startsWith('text/')) return { category: 'text', ext, mime };
+      if (IMAGE_EXTS.has(ext) || mime.startsWith('image/')) return { category: 'image', ext, mime };
+      if (VIDEO_EXTS.has(ext) || mime.startsWith('video/')) return { category: 'video', ext, mime };
+      if (AUDIO_EXTS.has(ext) || mime.startsWith('audio/')) return { category: 'audio', ext, mime };
+      return { category: 'binary', ext, mime };
+    }
+
+    function inferBadge(filename, category) {
       const lower = filename.toLowerCase();
+      if (category === 'image') return 'PHOTO';
+      if (category === 'video') return 'VIDEO';
+      if (category === 'audio') return 'AUDIO';
       if (lower.includes('rapaport') || lower.includes('rap') || lower.endsWith('.csv')) return 'RAP';
       if (lower.includes('stock') || lower.includes('parcel') || lower.includes('inventory')) return 'STOCK';
-      if (lower.includes('gia') || lower.includes('igi') || lower.includes('hrd') || lower.endsWith('.pdf')) return 'CERT';
-      return lower.endsWith('.csv') ? 'RAP' : 'CERT';
+      if (category === 'pdf' || lower.includes('gia') || lower.includes('igi') || lower.includes('hrd')) return 'CERT';
+      if (category === 'text') return 'DOC';
+      return 'FILE';
+    }
+
+    function arrayBufferToBase64(buffer) {
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      const chunk = 0x8000;
+      for (let i = 0; i < bytes.length; i += chunk) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+      }
+      return btoa(binary);
+    }
+
+    function readFileAsBase64(file) {
+      return readFileAsArrayBuffer(file).then(arrayBufferToBase64);
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     }
 
     function uniqueFilename(name) {
@@ -500,14 +603,11 @@ When analyzing uploaded documents:
         showToast(`Maximum ${MAX_FILES} files allowed`, 'error');
         return;
       }
-      if (file.size > MAX_FILE_SIZE) {
-        showToast(`${file.name} exceeds 20 MB limit`, 'error');
-        return;
-      }
 
-      const ext = file.name.split('.').pop().toLowerCase();
-      if (ext !== 'pdf' && ext !== 'csv') {
-        showToast(`${file.name}: only PDF and CSV supported`, 'error');
+      const { category, ext, mime } = classifyFile(file);
+      const maxSize = category === 'video' ? MAX_VIDEO_SIZE : MAX_FILE_SIZE;
+      if (file.size > maxSize) {
+        showToast(`${file.name} exceeds ${formatFileSize(maxSize)} limit`, 'error');
         return;
       }
 
@@ -515,33 +615,99 @@ When analyzing uploaded documents:
       showToast(`Processing ${filename}…`);
 
       try {
-        if (ext === 'pdf') {
+        const badge = inferBadge(filename, category);
+        const baseEntry = {
+          badge,
+          mimeType: mime,
+          fileSize: file.size,
+          uploadedAt: Date.now(),
+          pages: null,
+          numPages: 1,
+          base64: null,
+          dataUrl: null,
+          geminiInline: false
+        };
+
+        if (category === 'pdf') {
           const buffer = await readFileAsArrayBuffer(file);
           const { pages, fullText, numPages } = await extractPdfText(buffer);
           const hasText = pages.some(p => p.text && !p.text.startsWith('[No extractable'));
+          const b64 = arrayBufferToBase64(buffer);
           docTextStore[filename] = {
+            ...baseEntry,
             type: 'pdf',
             pages,
             fullText,
             numPages,
-            badge: inferBadge(filename),
             hasText,
-            uploadedAt: Date.now()
+            base64: b64,
+            geminiInline: true
           };
           if (!hasText) {
-            showToast(`${filename}: no extractable text — scanned PDFs may not work`, 'error');
+            showToast(`${filename}: no extractable text — Gemini will use visual PDF analysis`, 'error');
           }
-        } else {
+        } else if (category === 'text') {
           const rawText = await readFileAsText(file);
           const { text } = truncateText(rawText);
           docTextStore[filename] = {
-            type: 'csv',
+            ...baseEntry,
+            type: 'text',
             fullText: text,
-            pages: null,
-            numPages: 1,
-            badge: inferBadge(filename),
-            hasText: text.length > 0,
-            uploadedAt: Date.now()
+            hasText: text.length > 0
+          };
+        } else if (category === 'image') {
+          const buffer = await readFileAsArrayBuffer(file);
+          const b64 = arrayBufferToBase64(buffer);
+          const dataUrl = `data:${mime};base64,${b64}`;
+          docTextStore[filename] = {
+            ...baseEntry,
+            type: 'image',
+            fullText: `[Image file: ${filename}] — ${formatFileSize(file.size)}. Visual analysis available via Gemini.`,
+            hasText: false,
+            base64: b64,
+            dataUrl,
+            geminiInline: true
+          };
+        } else if (category === 'video') {
+          const buffer = await readFileAsArrayBuffer(file);
+          const b64 = arrayBufferToBase64(buffer);
+          const dataUrl = `data:${mime};base64,${b64}`;
+          docTextStore[filename] = {
+            ...baseEntry,
+            type: 'video',
+            fullText: `[Video file: ${filename}] — ${formatFileSize(file.size)}. Visual/motion analysis available via Gemini.`,
+            hasText: false,
+            base64: b64,
+            dataUrl,
+            geminiInline: true
+          };
+        } else if (category === 'audio') {
+          const buffer = await readFileAsArrayBuffer(file);
+          const b64 = arrayBufferToBase64(buffer);
+          const dataUrl = `data:${mime};base64,${b64}`;
+          docTextStore[filename] = {
+            ...baseEntry,
+            type: 'audio',
+            fullText: `[Audio file: ${filename}] — ${formatFileSize(file.size)}. Audio analysis available via Gemini.`,
+            hasText: false,
+            base64: b64,
+            dataUrl,
+            geminiInline: true
+          };
+        } else {
+          let fullText = `[File: ${filename}] — ${mime}, ${formatFileSize(file.size)}`;
+          try {
+            const snippet = await readFileAsText(file);
+            if (snippet && /^[\x09\x0a\x0d\x20-\x7e\u00a0-\ufffd]*$/.test(snippet.slice(0, 500))) {
+              const { text } = truncateText(snippet);
+              fullText = text;
+            }
+          } catch (_) { /* binary */ }
+          docTextStore[filename] = {
+            ...baseEntry,
+            type: 'binary',
+            fullText,
+            hasText: fullText.length > 0 && !fullText.startsWith('[File:')
           };
         }
 
@@ -610,8 +776,17 @@ When analyzing uploaded documents:
         item.className = `vault-item flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer transition-all border border-transparent hover:bg-white/5 ${selectedFilename === filename ? 'active' : ''}`;
         item.dataset.filename = filename;
 
-        const badgeColors = { CERT: 'bg-blue-500/20 text-blue-300', RAP: 'bg-emerald-500/20 text-emerald-300', STOCK: 'bg-amber-500/20 text-amber-300' };
-        const badgeClass = badgeColors[doc.badge] || badgeColors.CERT;
+        const badgeColors = {
+          CERT: 'bg-blue-500/20 text-blue-300',
+          RAP: 'bg-emerald-500/20 text-emerald-300',
+          STOCK: 'bg-amber-500/20 text-amber-300',
+          PHOTO: 'bg-purple-500/20 text-purple-300',
+          VIDEO: 'bg-rose-500/20 text-rose-300',
+          AUDIO: 'bg-orange-500/20 text-orange-300',
+          DOC: 'bg-slate-500/20 text-slate-300',
+          FILE: 'bg-gray-500/20 text-gray-300'
+        };
+        const badgeClass = badgeColors[doc.badge] || badgeColors.FILE;
 
         item.innerHTML = `
           <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${badgeClass} flex-shrink-0">${doc.badge}</span>
@@ -631,28 +806,61 @@ When analyzing uploaded documents:
       });
     }
 
-    // ─── Certificate Viewer ─────────────────────────────────────────────────────
+    // ─── Asset Viewer ───────────────────────────────────────────────────────────
+    function clearViewerPanels() {
+      viewerEmpty.classList.add('hidden');
+      viewerText.classList.add('hidden');
+      viewerMedia.classList.add('hidden');
+      viewerMedia.innerHTML = '';
+      viewerText.textContent = '';
+      pageTabs.classList.add('hidden');
+      pageTabs.innerHTML = '';
+    }
+
     function renderViewer() {
       if (!selectedFilename || !docTextStore[selectedFilename]) {
+        clearViewerPanels();
         viewerEmpty.classList.remove('hidden');
-        viewerText.classList.add('hidden');
         viewerMeta.textContent = '';
-        pageTabs.classList.add('hidden');
-        pageTabs.innerHTML = '';
         return;
       }
 
       const doc = docTextStore[selectedFilename];
-      viewerEmpty.classList.add('hidden');
-      viewerText.classList.remove('hidden');
+      clearViewerPanels();
 
+      const typeLabel = { pdf: 'PDF', text: 'Document', image: 'Image', video: 'Video', audio: 'Audio', binary: 'File' }[doc.type] || 'File';
       viewerMeta.textContent = doc.type === 'pdf'
         ? `${selectedFilename} · ${doc.numPages} page${doc.numPages !== 1 ? 's' : ''}`
-        : selectedFilename;
+        : `${selectedFilename} · ${typeLabel} · ${formatFileSize(doc.fileSize || 0)}`;
 
-      if (doc.type === 'pdf' && doc.pages && doc.pages.length > 1) {
+      if (doc.type === 'image' && doc.dataUrl) {
+        viewerMedia.classList.remove('hidden');
+        const img = document.createElement('img');
+        img.src = doc.dataUrl;
+        img.alt = selectedFilename;
+        viewerMedia.appendChild(img);
+      } else if (doc.type === 'video' && doc.dataUrl) {
+        viewerMedia.classList.remove('hidden');
+        const video = document.createElement('video');
+        video.src = doc.dataUrl;
+        video.controls = true;
+        video.playsInline = true;
+        video.className = 'w-full';
+        viewerMedia.appendChild(video);
+      } else if (doc.type === 'audio' && doc.dataUrl) {
+        viewerMedia.classList.remove('hidden');
+        const wrap = document.createElement('div');
+        wrap.className = 'w-full max-w-lg text-center';
+        wrap.innerHTML = `<p class="text-sm text-[#8a8a9a] mb-4">${selectedFilename}</p>`;
+        const audio = document.createElement('audio');
+        audio.src = doc.dataUrl;
+        audio.controls = true;
+        audio.className = 'w-full';
+        wrap.appendChild(audio);
+        viewerMedia.appendChild(wrap);
+      } else if (doc.type === 'pdf' && doc.pages && doc.pages.length > 1) {
+        viewerText.classList.remove('hidden');
         pageTabs.classList.remove('hidden');
-        pageTabs.innerHTML = '';
         doc.pages.forEach(pg => {
           const tab = document.createElement('button');
           tab.className = `page-tab text-xs px-2 py-1 rounded border border-white/10 text-[#8a8a9a] transition-all ${pg.pageNum === selectedPage ? 'active' : ''}`;
@@ -665,10 +873,12 @@ When analyzing uploaded documents:
         });
         const pageData = doc.pages.find(p => p.pageNum === selectedPage) || doc.pages[0];
         viewerText.textContent = pageData.text;
-      } else {
-        pageTabs.classList.add('hidden');
-        pageTabs.innerHTML = '';
+      } else if (doc.fullText) {
+        viewerText.classList.remove('hidden');
         viewerText.textContent = doc.fullText;
+      } else {
+        viewerMedia.classList.remove('hidden');
+        viewerMedia.innerHTML = `<p class="media-placeholder">Preview not available for this file type.<br>Gemini can still analyze it when referenced in chat.</p>`;
       }
 
       document.getElementById('viewerContent').scrollTop = 0;
@@ -680,15 +890,44 @@ When analyzing uploaded documents:
       let block = '=== UPLOADED DOCUMENTS ===\n\n';
       docOrder.forEach(filename => {
         const doc = docTextStore[filename];
-        const { text } = truncateText(doc.fullText);
-        block += `--- ${filename} ---\n${text}\n\n`;
+        const { text } = truncateText(doc.fullText || '');
+        block += `--- ${filename} (${doc.type}) ---\n${text}\n\n`;
       });
       block += '=== END DOCUMENTS ===\n\n';
       return block;
     }
 
+    function buildMediaParts(filenames) {
+      const parts = [];
+      let count = 0;
+      const targets = filenames || docOrder;
+
+      targets.forEach(filename => {
+        if (count >= MAX_INLINE_MEDIA) return;
+        const doc = docTextStore[filename];
+        if (!doc || !doc.geminiInline || !doc.base64) return;
+
+        const mime = doc.mimeType || 'application/octet-stream';
+        const canInline = mime.startsWith('image/') || mime.startsWith('video/') || mime.startsWith('audio/') || mime === 'application/pdf';
+        if (!canInline) return;
+
+        parts.push({
+          inline_data: {
+            mime_type: mime,
+            data: doc.base64
+          }
+        });
+        parts.push({
+          text: `[Attached media: ${filename}]`
+        });
+        count++;
+      });
+
+      return parts;
+    }
+
     function isDocSpecificQuestion(text) {
-      const keywords = ['upload', 'certificate', 'cert', 'rapaport', 'stone', 'diamond', 'match', 'pair', 'appraisal', 'trade value', 'compare', 'vault', 'uploaded', 'attached', 'this stone', 'these stones', 'parcel', 'stock'];
+      const keywords = ['upload', 'certificate', 'cert', 'rapaport', 'stone', 'diamond', 'match', 'pair', 'appraisal', 'trade value', 'compare', 'vault', 'uploaded', 'attached', 'this stone', 'these stones', 'parcel', 'stock', 'photo', 'image', 'video', 'picture', 'reel', 'marketing'];
       const lower = text.toLowerCase();
       return keywords.some(k => lower.includes(k));
     }
@@ -726,6 +965,11 @@ When analyzing uploaded documents:
         ? `${docContext}User question: ${finalQuestion}`
         : finalQuestion;
 
+      const mediaTargets = options.useSelected && selectedFilename
+        ? [selectedFilename, ...docOrder.filter(f => f !== selectedFilename)]
+        : docOrder;
+      const mediaParts = buildMediaParts(mediaTargets);
+
       const contents = [];
       const historySlice = chatHistory.slice(-MAX_HISTORY_TURNS * 2);
       historySlice.forEach(turn => {
@@ -736,7 +980,10 @@ When analyzing uploaded documents:
       });
       contents.push({
         role: 'user',
-        parts: [{ text: userMessageText }]
+        parts: [
+          { text: userMessageText },
+          ...mediaParts
+        ]
       });
 
       const mode = options.mode || activeMode;
@@ -794,7 +1041,7 @@ When analyzing uploaded documents:
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
 
-      return escaped.replace(/\[([^\]]+\.(pdf|csv))\]/gi, (match, filename) => {
+      return escaped.replace(/\[([^\]]+\.[a-z0-9]{1,8})\]/gi, (match, filename) => {
         const exists = docTextStore[filename];
         if (exists) {
           return `<button class="citation-link" data-citation="${filename.replace(/"/g, '&quot;')}">[${filename}]</button>`;
