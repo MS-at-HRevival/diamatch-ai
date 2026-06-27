@@ -150,9 +150,57 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    .chip:hover {
+    .chip:hover, .feature-btn:hover {
       border-color: var(--accent-diamond);
       background: rgba(0, 180, 255, 0.1);
+    }
+
+    .feature-btn.marketing { border-color: rgba(168, 85, 247, 0.35); }
+    .feature-btn.marketing:hover { background: rgba(168, 85, 247, 0.12); border-color: rgba(168, 85, 247, 0.6); }
+
+    .feature-btn.sales { border-color: rgba(251, 191, 36, 0.35); }
+    .feature-btn.sales:hover { background: rgba(251, 191, 36, 0.1); border-color: rgba(251, 191, 36, 0.6); }
+
+    .tool-section-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #5a5a6a;
+    }
+
+    .msg-assistant .copy-btn {
+      display: block;
+      margin-top: 8px;
+      font-size: 10px;
+      color: var(--accent-diamond-light);
+      background: rgba(0, 180, 255, 0.1);
+      border: 1px solid rgba(0, 180, 255, 0.25);
+      border-radius: 6px;
+      padding: 4px 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .msg-assistant .copy-btn:hover {
+      background: rgba(0, 180, 255, 0.2);
+      box-shadow: var(--accent-glow);
+    }
+
+    .mode-badge {
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(0, 180, 255, 0.15);
+      color: var(--accent-diamond-light);
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+
+    #powerTools {
+      max-height: 140px;
+      overflow-y: auto;
     }
   </style>
 </head>
@@ -167,7 +215,7 @@
       </svg>
       <div class="min-w-0">
         <h1 class="text-lg md:text-xl font-bold tracking-tight text-[#f5f5f7] truncate">DiaMatch AI</h1>
-        <p class="text-xs text-[#8a8a9a] hidden sm:block">Appraisal &amp; Layout Assistant</p>
+        <p class="text-xs text-[#8a8a9a] hidden sm:block">Appraisal, Marketing &amp; Sales Intelligence</p>
       </div>
     </div>
     <div class="flex items-center gap-2 md:gap-3 flex-shrink-0">
@@ -233,16 +281,46 @@
         <h2 class="text-xs font-semibold uppercase tracking-widest text-[#00b4ff]">The Chat Trader</h2>
       </div>
 
-      <div id="promptChips" class="px-3 py-2 flex flex-wrap gap-1.5 border-b border-white/5 flex-shrink-0">
-        <button class="chip text-xs px-2 py-1 rounded-full border border-white/10 text-[#8a8a9a] transition-all" data-prompt="Find matching pairs for earrings from all uploaded certs. They must have identical color, clarity, and table percentages within a 0.05mm structural tolerance.">Match pairs</button>
-        <button class="chip text-xs px-2 py-1 rounded-full border border-white/10 text-[#8a8a9a] transition-all" data-prompt="Based on the attached Rapaport matrix, what is the maximum trade value for this stone given its fluorescence drawback?">Appraisal check</button>
-        <button class="chip text-xs px-2 py-1 rounded-full border border-white/10 text-[#8a8a9a] transition-all" data-prompt="Compare color and clarity across all uploaded certificates.">Compare specs</button>
-        <button class="chip text-xs px-2 py-1 rounded-full border border-white/10 text-[#8a8a9a] transition-all" data-prompt="What does medium fluorescence do to diamond value?">Fluorescence impact</button>
+      <div id="powerTools" class="custom-scrollbar px-3 py-2 border-b border-white/5 flex-shrink-0 space-y-2">
+        <div>
+          <p class="tool-section-label mb-1">Trade &amp; Layout</p>
+          <div class="flex flex-wrap gap-1.5">
+            <button class="feature-btn chip text-xs px-2 py-1 rounded-full border border-white/10 text-[#8a8a9a] transition-all" data-mode="trade" data-require-docs="1" data-prompt="Find matching pairs for earrings from all uploaded certs. They must have identical color, clarity, and table percentages within a 0.05mm structural tolerance.">Match pairs</button>
+            <button class="feature-btn chip text-xs px-2 py-1 rounded-full border border-white/10 text-[#8a8a9a] transition-all" data-mode="trade" data-require-docs="1" data-prompt="Based on the attached Rapaport matrix, what is the maximum trade value for this stone given its fluorescence drawback?">Appraisal</button>
+            <button class="feature-btn chip text-xs px-2 py-1 rounded-full border border-white/10 text-[#8a8a9a] transition-all" data-mode="compare" data-require-docs="2" data-copyable="true" data-prompt="Generate a side-by-side Markdown comparison table of ALL uploaded certificates. Columns: one per stone (use filename as header). Rows: Carat, Shape, Color, Clarity, Cut, Depth%, Table%, Polish, Symmetry, Fluorescence, Measurements. Bold the best value in each row. Cite every [filename].">Compare table</button>
+            <button class="feature-btn chip text-xs px-2 py-1 rounded-full border border-white/10 text-[#8a8a9a] transition-all" data-mode="audit" data-require-docs="2" data-prompt="Run a full vault inventory audit on ALL uploaded certificates. Report shape/carat distribution, overstocked categories, missing trendy shapes (e.g. cushion, oval), and specific acquisition recommendations. Cite each [filename] with counts.">Blind spot audit</button>
+          </div>
+        </div>
+        <div>
+          <p class="tool-section-label mb-1">Marketing</p>
+          <div class="flex flex-wrap gap-1.5">
+            <button class="feature-btn marketing chip text-xs px-2 py-1 rounded-full border text-[#8a8a9a] transition-all" data-mode="marketing" data-require-docs="1" data-copyable="true" data-use-selected="true" data-prompt="Act as a world-class luxury jewelry creative director. Using the certificate specs, produce exactly these three sections:
+
+## 30-Second Reel/TikTok Script
+Scene-by-scene filming instructions with specific lighting angles to minimize visible inclusions and maximize brilliance for the cut grade.
+
+## Instagram Captions
+Two high-converting luxury captions with optimal hashtags.
+
+## AI Image Prompts
+Three detailed prompts for Midjourney or DALL-E (macro photography, velvet/dark backgrounds, accurate carat/shape).
+
+Cite [filename] for every spec referenced.">Generate marketing</button>
+            <button class="feature-btn marketing chip text-xs px-2 py-1 rounded-full border text-[#8a8a9a] transition-all" data-mode="passport" data-require-docs="1" data-copyable="true" data-use-selected="true" data-prompt="Create a client-ready Diamond Passport — a romantic VIP email summary. Translate all technical jargon (VVS1, fluorescence, table %, etc.) into luxury consumer benefits. Structure: compelling opening hook, The Diamond Story (2-3 paragraphs), Key Benefits bullet list, elegant closing invitation. Ready to copy-paste into an email. Cite [filename].">Diamond passport</button>
+          </div>
+        </div>
+        <div>
+          <p class="tool-section-label mb-1">Sales training</p>
+          <div class="flex flex-wrap gap-1.5">
+            <button class="feature-btn sales chip text-xs px-2 py-1 rounded-full border text-[#8a8a9a] transition-all" data-mode="negotiation" data-require-docs="1" data-use-selected="true" data-prompt="NEGOTIATION SIMULATOR START: You are now a skeptical, price-sensitive diamond buyer. Based on the certificate, identify this stone's weakest selling point and open with a realistic price objection (be tough but fair). Stay in buyer character. Cite [filename].">Negotiation sim</button>
+            <button class="feature-btn chip text-xs px-2 py-1 rounded-full border border-white/10 text-[#8a8a9a] transition-all" data-mode="trade" data-prompt="What does medium fluorescence do to diamond trade value?">Fluorescence Q&amp;A</button>
+          </div>
+        </div>
       </div>
 
       <div id="chatMessages" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-3">
         <div class="msg-assistant rounded-xl px-3 py-2 text-sm text-[#c8c8d0]">
-          Welcome to DiaMatch AI. Upload grading certificates and Rapaport sheets to The Vault, then ask about layout matching, appraisals, or gemology.
+          Welcome to DiaMatch AI. Upload certificates to The Vault, then use Power Tools for layout matching, marketing assets, client passports, negotiation training, and inventory audits.
         </div>
       </div>
 
@@ -273,6 +351,7 @@
     let selectedPage = 1;
     let chatHistory = [];
     let isLoading = false;
+    let activeMode = null;
 
     const MAX_FILES = 15;
     const MAX_FILE_SIZE = 20 * 1024 * 1024;
@@ -288,6 +367,23 @@ When analyzing uploaded documents:
 - ALWAYS cite the exact source filename in square brackets, e.g. [GIA-123456.pdf] or [rapaport-march.csv], whenever referencing document data.
 - If the user asks a general gemology question unrelated to uploaded documents (e.g., "What does eye-clean mean?"), answer from your expert knowledge without requiring a document citation.
 - Be precise, professional, and concise — you are advising B2B trade professionals.`;
+
+    const MODE_LABELS = {
+      marketing: 'Social Media Generator',
+      passport: 'Diamond Passport',
+      negotiation: 'Negotiation Simulator',
+      compare: 'Compare Table',
+      audit: 'Blind Spot Audit',
+      trade: 'Trade Analysis'
+    };
+
+    const MODE_SYSTEM_ADDENDUM = {
+      marketing: `\n\nYou are also a world-class luxury jewelry creative director. Output must be polished, platform-ready, and visually descriptive.`,
+      passport: `\n\nYou are also an elite luxury copywriter. Write romantic, client-facing prose — never dry technical reports.`,
+      negotiation: `\n\nYou are role-playing as a skeptical diamond buyer in a sales training simulation. Stay in character as the buyer until the jeweler responds. After the jeweler replies, continue the objection handling realistically. Occasionally offer brief coaching tips in parentheses.`,
+      compare: `\n\nFormat comparisons as clean Markdown tables. Be exhaustive with specs.`,
+      audit: `\n\nThink like an inventory strategist. Be direct about overstock gaps and market opportunities.`
+    };
 
     // ─── DOM refs ───────────────────────────────────────────────────────────────
     const apiKeyInput = document.getElementById('apiKeyInput');
@@ -598,11 +694,19 @@ When analyzing uploaded documents:
     }
 
     // ─── Gemini API ───────────────────────────────────────────────────────────────
-    async function callGemini(userQuestion) {
+    async function callGemini(userQuestion, options = {}) {
       const apiKey = getApiKey();
       if (!apiKey) {
         shakeStatusDot();
         showToast('Enter your Gemini API key in the header', 'error');
+        return null;
+      }
+
+      const requireDocs = options.requireDocs ?? 0;
+      if (requireDocs > 0 && docOrder.length < requireDocs) {
+        showToast(requireDocs === 1
+          ? 'Upload at least one certificate to The Vault'
+          : `Upload at least ${requireDocs} certificates for this feature`, 'error');
         return null;
       }
 
@@ -612,9 +716,15 @@ When analyzing uploaded documents:
       }
 
       const docContext = buildDocumentContext();
+      let finalQuestion = userQuestion;
+
+      if (options.useSelected && selectedFilename) {
+        finalQuestion = `Focus primarily on the selected certificate: ${selectedFilename}\n\n${userQuestion}`;
+      }
+
       const userMessageText = docContext
-        ? `${docContext}User question: ${userQuestion}`
-        : userQuestion;
+        ? `${docContext}User question: ${finalQuestion}`
+        : finalQuestion;
 
       const contents = [];
       const historySlice = chatHistory.slice(-MAX_HISTORY_TURNS * 2);
@@ -629,11 +739,14 @@ When analyzing uploaded documents:
         parts: [{ text: userMessageText }]
       });
 
+      const mode = options.mode || activeMode;
+      const systemText = SYSTEM_PROMPT + (mode && MODE_SYSTEM_ADDENDUM[mode] ? MODE_SYSTEM_ADDENDUM[mode] : '');
+
       const body = {
-        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        systemInstruction: { parts: [{ text: systemText }] },
         contents,
         generationConfig: {
-          temperature: 0.3,
+          temperature: mode === 'negotiation' || mode === 'marketing' || mode === 'passport' ? 0.7 : 0.3,
           maxOutputTokens: 4096
         }
       };
@@ -690,38 +803,78 @@ When analyzing uploaded documents:
       }).replace(/\n/g, '<br>');
     }
 
-    function appendMessage(role, text) {
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(
+        () => showToast('Copied to clipboard'),
+        () => showToast('Copy failed — select text manually', 'error')
+      );
+    }
+
+    function appendMessage(role, text, options = {}) {
       const div = document.createElement('div');
       div.className = `rounded-xl px-3 py-2 text-sm ${role === 'user' ? 'msg-user ml-6' : 'msg-assistant mr-2'} text-[#e8e8ec]`;
+
       if (role === 'user') {
-        div.textContent = text;
+        if (options.modeLabel) {
+          const badge = document.createElement('span');
+          badge.className = 'mode-badge';
+          badge.textContent = options.modeLabel;
+          div.appendChild(badge);
+          div.appendChild(document.createElement('br'));
+        }
+        const span = document.createElement('span');
+        span.textContent = text.length > 200 ? text.slice(0, 200) + '…' : text;
+        div.appendChild(span);
       } else {
-        div.innerHTML = linkifyCitations(text);
-        div.querySelectorAll('.citation-link').forEach(btn => {
+        if (options.modeLabel) {
+          const badge = document.createElement('span');
+          badge.className = 'mode-badge';
+          badge.textContent = options.modeLabel;
+          div.appendChild(badge);
+          div.appendChild(document.createElement('br'));
+        }
+        const content = document.createElement('div');
+        content.innerHTML = linkifyCitations(text);
+        div.appendChild(content);
+        content.querySelectorAll('.citation-link').forEach(btn => {
           btn.addEventListener('click', () => {
             const fname = btn.dataset.citation;
             if (docTextStore[fname]) selectDocument(fname);
           });
         });
+        if (options.copyable) {
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.textContent = 'Copy to clipboard';
+          copyBtn.addEventListener('click', () => copyToClipboard(text));
+          div.appendChild(copyBtn);
+        }
       }
       chatMessages.appendChild(div);
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    async function sendMessage(text) {
+    async function sendMessage(text, options = {}) {
       const question = text.trim();
       if (!question || isLoading) return;
 
-      appendMessage('user', question);
+      const mode = options.mode || null;
+      if (mode) activeMode = mode === 'negotiation' ? 'negotiation' : null;
+
+      const modeLabel = mode ? MODE_LABELS[mode] : null;
+      appendMessage('user', question, { modeLabel });
       chatInput.value = '';
       isLoading = true;
       sendBtn.disabled = true;
       loadingIndicator.classList.remove('hidden');
 
       try {
-        const reply = await callGemini(question);
+        const reply = await callGemini(question, options);
         if (reply) {
-          appendMessage('assistant', reply);
+          appendMessage('assistant', reply, {
+            modeLabel,
+            copyable: options.copyable || mode === 'passport' || mode === 'marketing'
+          });
           chatHistory.push({ role: 'user', text: question });
           chatHistory.push({ role: 'model', text: reply });
           if (chatHistory.length > MAX_HISTORY_TURNS * 2) {
@@ -739,20 +892,35 @@ When analyzing uploaded documents:
       }
     }
 
-    sendBtn.addEventListener('click', () => sendMessage(chatInput.value));
+    document.querySelectorAll('.feature-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const prompt = btn.dataset.prompt;
+        const mode = btn.dataset.mode || 'trade';
+        const requireDocs = parseInt(btn.dataset.requireDocs || '0', 10);
+        const useSelected = btn.dataset.useSelected === 'true';
+        const copyable = btn.dataset.copyable === 'true';
+
+        if (useSelected && !selectedFilename) {
+          showToast('Select a certificate in The Vault first', 'error');
+          return;
+        }
+
+        sendMessage(prompt, { mode, requireDocs, useSelected, copyable });
+      });
+    });
+
+    // Keep negotiation mode active for follow-up chat replies
     chatInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        sendMessage(chatInput.value);
+        const opts = activeMode === 'negotiation' ? { mode: 'negotiation' } : {};
+        sendMessage(chatInput.value, opts);
       }
     });
 
-    document.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        const prompt = chip.dataset.prompt;
-        chatInput.value = prompt;
-        sendMessage(prompt);
-      });
+    sendBtn.addEventListener('click', () => {
+      const opts = activeMode === 'negotiation' ? { mode: 'negotiation' } : {};
+      sendMessage(chatInput.value, opts);
     });
 
     // ─── Init ───────────────────────────────────────────────────────────────────
