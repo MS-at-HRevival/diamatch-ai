@@ -50,7 +50,7 @@ Upload GIA/IGI/HRD grading certificates, Rapaport price matrices, and supplier s
 1. Create a new **public** repository named `diamatch-ai` on GitHub
 2. Push this project:
    ```bash
-   git remote add origin https://github.com/YOUR_USERNAME/diamatch-ai.git
+   git remote add origin https://github.com/MS-at-HRevival/diamatch-ai.git
    git branch -M main
    git push -u origin main
    ```
