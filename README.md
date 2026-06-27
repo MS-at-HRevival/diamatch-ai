@@ -1,0 +1,46 @@
+# DiaMatch AI
+
+**The Diamond Appraisal & Layout Assistant** — a luxury B2B web tool for jewelers and diamond traders.
+
+Upload GIA/IGI/HRD grading certificates, Rapaport price matrices, and supplier stock sheets, then chat with an AI gemologist powered by Google Gemini 2.5 Flash.
+
+## Features
+
+- **The Vault** — upload multiple PDFs and CSVs (certs, Rapaport sheets, parcel lists)
+- **Certificate Viewer** — inspect extracted text from selected documents
+- **The Chat Trader** — ask about layout matching, trade appraisals, and gemology
+- **Source citations** — AI cites exact filenames (e.g. `[GIA-123456.pdf]`)
+- **Bring your own API key** — paste your Gemini key in the header (never stored in code)
+
+## Use cases
+
+1. **Layout matching** — *"Find matching pairs for earrings from all uploaded certs with identical color, clarity, and table % within 0.05mm tolerance."*
+2. **Instant appraisal** — *"Based on the Rapaport matrix, what is the maximum trade value for this stone given its fluorescence drawback?"*
+
+## Getting started
+
+1. Get a free API key from [Google AI Studio](https://aistudio.google.com/apikey)
+2. Open `index.html` in your browser (or visit the live demo below)
+3. Paste your API key in the header — the status dot turns green when detected
+4. Upload documents to The Vault and start chatting
+
+## Tech stack
+
+- Single-file `index.html` (HTML + Tailwind CSS CDN + vanilla JavaScript)
+- [PDF.js 3.4.120](https://mozilla.github.io/pdf.js/) for client-side PDF text extraction
+- [Gemini 2.5 Flash](https://ai.google.dev/) via REST API
+
+## Limitations
+
+- Text-based PDFs work best; scanned/image-only certificates may not extract text
+- Max 15 files, 20 MB each
+- API key is stored in `sessionStorage` only (cleared when the tab closes)
+
+## Live demo
+
+<!-- Replace with your Vercel URL after deployment -->
+`https://diamatch-ai.vercel.app`
+
+## License
+
+MIT
