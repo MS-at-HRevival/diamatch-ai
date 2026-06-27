@@ -36,10 +36,38 @@ Upload GIA/IGI/HRD grading certificates, Rapaport price matrices, and supplier s
 - Max 15 files, 20 MB each
 - API key is stored in `sessionStorage` only (cleared when the tab closes)
 
-## Live demo
+## Local testing
 
-<!-- Replace with your Vercel URL after deployment -->
-`https://diamatch-ai.vercel.app`
+1. Open `index.html` directly in Chrome/Edge, or run a local server:
+   ```bash
+   python -m http.server 3456
+   ```
+2. Visit `http://localhost:3456`
+3. Use sample files in `sample-data/` (GIA cert PDFs + Rapaport CSV) for testing
+
+## Deploy to GitHub
+
+1. Create a new **public** repository named `diamatch-ai` on GitHub
+2. Push this project:
+   ```bash
+   git remote add origin https://github.com/YOUR_USERNAME/diamatch-ai.git
+   git branch -M main
+   git push -u origin main
+   ```
+
+## Deploy to Vercel
+
+1. Sign in at [vercel.com](https://vercel.com) with GitHub
+2. **Add New → Project** → import `diamatch-ai`
+3. Framework preset: **Other** | Build command: *(empty)* | Output: `/`
+4. Deploy and copy your live URL (e.g. `https://diamatch-ai.vercel.app`)
+5. Update the live demo URL in this README
+
+## Submission checklist
+
+- [ ] Live Vercel URL
+- [ ] Public GitHub repo URL
+- [ ] Screenshot showing uploaded document, Certificate Viewer text, and chat response with `[filename]` citation
 
 ## License
 
