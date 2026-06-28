@@ -488,12 +488,21 @@
       overflow: auto;
       flex: 1;
       min-height: 0;
-      display: flex;
       align-items: center;
       justify-content: center;
-      background: repeating-conic-gradient(#f1f5f9 0% 25%, #fff 0% 50%) 50% / 16px 16px;
+      background: transparent;
+      border: none;
       border-radius: var(--radius-sm);
+    }
+
+    #viewerMediaWrap:not(.hidden) {
+      display: flex;
+      background: var(--bg-surface);
       border: 1px solid var(--border);
+    }
+
+    #viewerMediaWrap.hidden {
+      display: none !important;
     }
 
     #viewerToolbar {
@@ -746,6 +755,7 @@
     body.dark-mode .header-icon-btn { background: #334155; color: #e2e8f0; }
 
     .cost-hint { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+  </style>
 </head>
 <body class="flex flex-col h-screen">
 
