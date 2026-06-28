@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DiaMatch AI — The Diamond Appraisal &amp; Layout Assistant</title>
+  <title>DiaMatch AI — Diamond Trade Intelligence</title>
+  <meta name="description" content="B2B diamond appraisal, layout matching, and trade intelligence powered by Gemini." />
+  <meta name="theme-color" content="#1d4ed8" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%233b82f6'/%3E%3Cstop offset='100%25' stop-color='%231d4ed8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='%230f172a'/%3E%3Cpath d='M16 5L7 12l9 15 9-15-9-7z' fill='url(%23g)' stroke='%2393c5fd' stroke-width='.8'/%3E%3Cpath d='M7 12h18M10 12l6-7 6 7' stroke='%23dbeafe' stroke-width='.6' opacity='.9'/%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231d4ed8'/%3E%3Cpath d='M16 5L7 12l9 15 9-15-9-7z' fill='%23fff' opacity='.95'/%3E%3C/svg%3E" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
@@ -13,36 +17,218 @@
   </script>
   <style>
     :root {
-      --bg-base: #f4f6f9;
+      --bg-base: #eef2f7;
       --bg-surface: #ffffff;
-      --bg-muted: #eef2f6;
-      --bg-chat: #ffffff;
-      --text-primary: #1e293b;
-      --text-secondary: #64748b;
+      --bg-muted: #f4f6f9;
+      --bg-chat: #f8fafc;
+      --bg-elevated: #ffffff;
+      --bg-input: #ffffff;
+      --header-bg: rgba(255, 255, 255, 0.88);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
       --text-muted: #94a3b8;
       --accent: #3b82f6;
       --accent-soft: #dbeafe;
       --accent-deep: #1d4ed8;
       --gold: #b8956a;
       --gold-soft: #f5f0e8;
-      --border: rgba(15, 23, 42, 0.08);
-      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
-      --shadow-md: 0 8px 30px rgba(15, 23, 42, 0.08);
-      --shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.1);
-      --radius: 16px;
+      --border: rgba(15, 23, 42, 0.09);
+      --border-strong: rgba(15, 23, 42, 0.14);
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05), 0 2px 8px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 4px 24px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 16px 48px rgba(15, 23, 42, 0.12);
+      --radius: 14px;
       --radius-sm: 10px;
       --status-live: #22c55e;
-      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --sidebar-w: 220px;
+    }
+
+    body.dark-mode {
+      color-scheme: dark;
+      --bg-base: #0a0f1a;
+      --bg-surface: #131b2b;
+      --bg-muted: #1a2438;
+      --bg-chat: #0f1623;
+      --bg-elevated: #1c2738;
+      --bg-input: #1e293b;
+      --header-bg: rgba(10, 15, 26, 0.94);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-soft: rgba(59, 130, 246, 0.18);
+      --accent-deep: #60a5fa;
+      --gold-soft: rgba(184, 149, 106, 0.12);
+      --border: rgba(148, 163, 184, 0.12);
+      --border-strong: rgba(148, 163, 184, 0.22);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+      --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.4);
     }
 
     * { box-sizing: border-box; }
 
     body {
       font-family: 'Inter', system-ui, sans-serif;
-      background: linear-gradient(160deg, #f8fafc 0%, #eef2f7 45%, #f1f5f9 100%);
+      background: var(--bg-base);
+      background-image: radial-gradient(ellipse 120% 80% at 50% -20%, rgba(59, 130, 246, 0.07), transparent 55%);
       color: var(--text-primary);
       min-height: 100vh;
       overflow: hidden;
+    }
+
+    body.dark-mode {
+      background-image: radial-gradient(ellipse 100% 60% at 50% -10%, rgba(59, 130, 246, 0.08), transparent 50%);
+    }
+
+    .text-default { color: var(--text-primary); }
+    .text-subtle { color: var(--text-secondary); }
+    .text-faint { color: var(--text-muted); }
+    .surface { background: var(--bg-surface); }
+    .surface-muted { background: var(--bg-muted); }
+    .border-subtle { border-color: var(--border); }
+
+    .app-header {
+      background: var(--header-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .app-shell {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      gap: 0;
+      padding: 8px 8px 8px 0;
+    }
+
+    #toolsSidebar {
+      width: var(--sidebar-w);
+      min-width: 180px;
+      max-width: 280px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-left: 8px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .tools-sidebar-head {
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg-surface) 100%);
+    }
+
+    .tools-sidebar-head .brand-title {
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+
+    #powerTools {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    #powerTools .tool-section-label {
+      display: block;
+      padding: 0 4px 6px;
+      margin: 0;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+    }
+
+    #powerTools .tool-btn-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    #powerTools .feature-btn,
+    #powerTools .chip {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 500;
+      background: var(--bg-muted);
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    #powerTools .feature-btn:hover,
+    #powerTools .chip:hover {
+      background: var(--accent-soft);
+      border-color: rgba(59, 130, 246, 0.25);
+      color: var(--accent-deep);
+      transform: translateX(2px);
+    }
+
+    #powerTools .feature-btn.marketing:hover { background: rgba(139, 92, 246, 0.12); color: #a78bfa; border-color: rgba(167, 139, 250, 0.3); }
+    #powerTools .feature-btn.sales:hover { background: rgba(245, 158, 11, 0.12); color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); }
+    #powerTools .feature-btn.studio:hover { background: rgba(16, 185, 129, 0.12); color: #34d399; border-color: rgba(52, 211, 153, 0.3); }
+
+    .panel-header {
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chat-header {
+      background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-muted) 100%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chat-messages-area {
+      background: var(--bg-chat);
+    }
+
+    .chat-footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+    }
+
+    .chat-input-wrap {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+    }
+
+    .chat-input-wrap input {
+      color: var(--text-primary);
+    }
+
+    .chat-input-wrap input::placeholder {
+      color: var(--text-muted);
+    }
+
+    #viewerContent {
+      background: var(--bg-muted);
+    }
+
+    #viewerText {
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      border-color: var(--border);
+    }
+
+    #loadingIndicator {
+      background: var(--bg-elevated);
+      border-color: var(--border);
+      color: var(--text-secondary);
     }
 
     .brand-title {
@@ -150,7 +336,7 @@
     }
 
     .btn-ghost:hover {
-      background: #fff;
+      background: var(--bg-elevated);
       border-color: rgba(59, 130, 246, 0.25);
       color: var(--accent-deep);
     }
@@ -206,15 +392,17 @@
     }
 
     .msg-user {
-      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-      border: 1px solid rgba(59, 130, 246, 0.15);
+      background: linear-gradient(135deg, var(--accent-soft) 0%, rgba(59, 130, 246, 0.08) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.2);
       border-radius: 14px 14px 4px 14px;
+      color: var(--text-primary);
     }
 
     .msg-assistant {
-      background: var(--bg-muted);
+      background: var(--bg-elevated);
       border: 1px solid var(--border);
       border-radius: 14px 14px 14px 4px;
+      color: var(--text-primary);
     }
 
     .chat-md { line-height: 1.6; word-break: break-word; color: var(--text-primary); }
@@ -231,18 +419,20 @@
     .chat-md h3, .chat-md h4 { font-size: 1em; color: var(--accent-deep); }
     .chat-md ul, .chat-md ol { margin: 0.4em 0 0.65em; padding-left: 1.25em; }
     .chat-md li { margin-bottom: 0.3em; }
-    .chat-md strong { color: #0f172a; font-weight: 600; }
+    .chat-md strong { color: var(--text-primary); font-weight: 600; }
     .chat-md em { color: var(--text-secondary); }
     .chat-md code {
-      background: #fff;
+      background: var(--bg-muted);
       border: 1px solid var(--border);
+      color: var(--text-primary);
       border-radius: 5px;
       padding: 0.1em 0.4em;
       font-size: 0.88em;
     }
     .chat-md pre {
-      background: #fff;
+      background: var(--bg-muted);
       border: 1px solid var(--border);
+      color: var(--text-primary);
       border-radius: var(--radius-sm);
       padding: 0.75em;
       overflow-x: auto;
@@ -256,20 +446,17 @@
       font-size: 0.88em;
       display: block;
       overflow-x: auto;
-      background: #fff;
-      border-radius: var(--radius-sm);
-    }
-    .chat-md th, .chat-md td {
+      background: var(--bg-surface);
       border: 1px solid var(--border);
       padding: 0.5em 0.6em;
       text-align: left;
     }
     .chat-md th {
       background: var(--gold-soft);
-      color: #78350f;
+      color: var(--text-primary);
       font-weight: 600;
     }
-    .chat-md tr:nth-child(even) td { background: #fafbfc; }
+    .chat-md tr:nth-child(even) td { background: var(--bg-muted); }
     .chat-md hr { border: none; border-top: 1px solid var(--border); margin: 0.75em 0; }
     .chat-md blockquote {
       border-left: 3px solid var(--gold);
@@ -281,7 +468,7 @@
     }
 
     .chip, .feature-btn {
-      background: #fff;
+      background: var(--bg-muted);
       border: 1px solid var(--border);
       color: var(--text-secondary);
       transition: all var(--transition);
@@ -308,7 +495,7 @@
     .msg-assistant .artifact-actions button {
       font-size: 11px;
       color: var(--accent-deep);
-      background: #fff;
+      background: var(--bg-surface);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 5px 10px;
@@ -399,7 +586,7 @@
     }
 
     .artifact-table tr.highlight td {
-      background: #fffbeb;
+      background: var(--gold-soft);
       font-weight: 600;
     }
 
@@ -414,8 +601,9 @@
       border-radius: var(--radius-sm);
       padding: 0.75rem;
       margin-bottom: 0.5rem;
-      background: #fff;
+      background: var(--bg-surface);
       font-size: 0.75rem;
+      color: var(--text-primary);
     }
 
     .video-kit-scene strong { color: var(--accent-deep); }
@@ -445,7 +633,7 @@
       margin-top: 10px;
       font-size: 11px;
       color: var(--accent-deep);
-      background: #fff;
+      background: var(--bg-surface);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 5px 10px;
@@ -511,7 +699,7 @@
       gap: 4px;
       padding: 6px 8px;
       border-bottom: 1px solid var(--border);
-      background: #fafbfc;
+      background: var(--bg-muted);
       flex-shrink: 0;
     }
 
@@ -531,7 +719,7 @@
       padding: 4px 8px;
       border-radius: 6px;
       border: 1px solid var(--border);
-      background: #fff;
+      background: var(--bg-surface);
       color: var(--text-secondary);
       cursor: pointer;
       transition: all var(--transition);
@@ -550,14 +738,22 @@
       font-weight: 600;
     }
 
+    #appShell {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      overflow: hidden;
+    }
+
     #workspace {
       display: flex;
       flex-direction: column;
       min-height: 0;
       flex: 1;
-      padding: 10px;
+      padding: 8px 8px 8px 0;
       gap: 0;
       overflow: hidden;
+      min-width: 0;
     }
 
     #topPane {
@@ -571,6 +767,7 @@
     #vaultPanel {
       min-width: 160px;
       max-width: 55%;
+      border-right: 1px solid var(--border);
     }
 
     #viewerPanel {
@@ -611,7 +808,8 @@
       width: 40px;
       height: 3px;
       border-radius: 2px;
-      background: #cbd5e1;
+      background: var(--text-muted);
+      opacity: 0.5;
     }
 
     .resize-handle-v {
@@ -630,7 +828,8 @@
       width: 3px;
       height: 40px;
       border-radius: 2px;
-      background: #cbd5e1;
+      background: var(--text-muted);
+      opacity: 0.5;
     }
 
     body.resizing { cursor: row-resize; user-select: none; }
@@ -642,7 +841,7 @@
       min-height: 280px;
       border: none;
       border-radius: var(--radius-sm);
-      background: #fff;
+      background: var(--bg-surface);
     }
 
     #viewerLinkFrame {
@@ -651,30 +850,11 @@
       min-height: 200px;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      background: #fff;
-    }
-
-    #powerTools {
-      max-height: none;
-      overflow-x: auto;
-      overflow-y: hidden;
-      flex-wrap: nowrap;
-      display: flex;
-      gap: 1rem;
-      padding-bottom: 4px;
-    }
-
-    #powerTools > div { flex-shrink: 0; }
-
-    .media-placeholder {
-      color: var(--text-muted);
-      font-size: 0.875rem;
-      text-align: center;
-      padding: 2rem;
+      background: var(--bg-surface);
     }
 
     .input-field {
-      background: #fff;
+      background: var(--bg-input);
       border: 1px solid var(--border);
       color: var(--text-primary);
       border-radius: var(--radius-sm);
@@ -690,7 +870,7 @@
     .input-field::placeholder { color: var(--text-muted); }
 
     .chat-input-wrap {
-      background: #fff;
+      background: var(--bg-input);
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 6px;
@@ -705,27 +885,102 @@
 
     .side-panel-collapsed { display: none !important; }
 
-    body.dark-mode {
-      --bg-base: #0f172a;
-      --bg-surface: #1e293b;
-      --bg-muted: #334155;
-      --bg-chat: #1e293b;
-      --text-primary: #f1f5f9;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
-      --border: rgba(148, 163, 184, 0.15);
+    body.dark-mode .msg-user {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.22) 0%, rgba(59, 130, 246, 0.1) 100%);
+      border-color: rgba(96, 165, 250, 0.3);
     }
-    body.dark-mode { background: linear-gradient(160deg, #0f172a 0%, #1e293b 45%, #0f172a 100%); }
-    body.dark-mode header { background: rgba(30, 41, 59, 0.9); border-color: rgba(148, 163, 184, 0.15); }
-    body.dark-mode .panel { background: var(--bg-surface); color: var(--text-primary); }
-    body.dark-mode .input-field { background: #334155; color: #f1f5f9; border-color: var(--border); }
-    body.dark-mode .msg-user { background: #334155; }
-    body.dark-mode .msg-assistant { background: #1e293b; border-color: var(--border); }
 
-    .tool-section-collapsed .flex.flex-wrap { display: none !important; }
-    .tool-section-label { cursor: pointer; user-select: none; }
-    .tool-section-label::after { content: ' ▾'; opacity: 0.5; }
-    .tool-section-collapsed .tool-section-label::after { content: ' ▸'; }
+    body.dark-mode .artifact-table tr.highlight td {
+      background: rgba(245, 158, 11, 0.15);
+    }
+
+    body.dark-mode .video-kit-scene {
+      background: var(--bg-elevated);
+    }
+
+    body.dark-mode .mode-badge {
+      color: #fcd34d;
+      border-color: rgba(184, 149, 106, 0.35);
+    }
+
+    .tool-section-collapsed .tool-btn-list { display: none !important; }
+    #powerTools .tool-section-label { cursor: pointer; user-select: none; }
+    #powerTools .tool-section-label::after { content: ' ▾'; opacity: 0.45; font-size: 8px; }
+    #powerTools .tool-section-collapsed .tool-section-label::after { content: ' ▸'; }
+
+    .panel-bar {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      background: var(--bg-elevated);
+    }
+
+    .upload-zone {
+      border: 2px dashed var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: var(--bg-muted);
+      color: var(--text-secondary);
+    }
+
+    .form-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .modal-close {
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      font-size: 1.35rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: color var(--transition);
+    }
+
+    .modal-close:hover { color: var(--text-primary); }
+
+    .matcher-result {
+      background: var(--bg-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+    }
+
+    .vault-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .vault-badge-cert { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .vault-badge-rap { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .vault-badge-stock { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    .vault-badge-link { background: rgba(6, 182, 212, 0.2); color: #22d3ee; }
+    .vault-badge-photo { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+    .vault-badge-video { background: rgba(244, 63, 94, 0.2); color: #fb7185; }
+    .vault-badge-audio { background: rgba(249, 115, 22, 0.2); color: #fb923c; }
+    .vault-badge-doc { background: rgba(100, 116, 139, 0.25); color: #94a3b8; }
+    .vault-badge-file { background: rgba(107, 114, 128, 0.2); color: #9ca3af; }
+    .vault-badge-gen { background: rgba(20, 184, 166, 0.2); color: #2dd4bf; }
+
+    .vault-filename { font-size: 11px; color: var(--text-primary); }
+    .vault-remove { color: var(--text-muted); }
+    .vault-remove:hover { color: #f87171; }
+
+    .toast-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .artifact-inline {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
 
     .settings-modal {
       position: fixed; inset: 0; z-index: 100;
@@ -749,121 +1004,67 @@
 
     .header-icon-btn {
       font-size: 11px; padding: 6px 10px; border-radius: 8px;
-      border: 1px solid var(--border); background: #fff; color: var(--text-secondary);
+      border: 1px solid var(--border); background: var(--bg-elevated); color: var(--text-secondary);
       cursor: pointer; transition: all var(--transition);
     }
     .header-icon-btn:hover { background: var(--accent-soft); color: var(--accent-deep); }
-    body.dark-mode .header-icon-btn { background: #334155; color: #e2e8f0; }
 
     .cost-hint { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+    @media (max-width: 768px) {
+      :root { --sidebar-w: 180px; }
+      #appShell { padding-left: 4px; }
+    }
   </style>
 </head>
 <body class="flex flex-col h-screen">
 
   <!-- Header -->
-  <header class="flex items-center justify-between px-4 md:px-5 py-2.5 flex-shrink-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-200/80">
+  <header class="app-header flex items-center justify-between px-4 md:px-5 py-2.5 flex-shrink-0 z-30">
     <div class="flex items-center gap-3 min-w-0">
       <svg class="w-9 h-9 flex-shrink-0 diamond-glow" viewBox="0 0 24 24" fill="none">
         <path d="M12 2L4 9L12 22L20 9L12 2Z" stroke="#3b82f6" stroke-width="1.5" fill="rgba(59,130,246,0.08)"/>
         <path d="M4 9H20M8 9L12 2L16 9M8 9L12 22L16 9" stroke="#60a5fa" stroke-width="1" opacity="0.8"/>
       </svg>
       <div class="min-w-0">
-        <h1 class="brand-title text-xl md:text-2xl text-slate-800 truncate">DiaMatch AI</h1>
-        <p class="text-[11px] text-slate-500 hidden sm:block tracking-wide">Diamond Trade Intelligence</p>
+        <h1 class="brand-title text-xl md:text-2xl text-default truncate">DiaMatch AI</h1>
+        <p class="text-[11px] text-subtle hidden sm:block tracking-wide">Diamond Trade Intelligence</p>
       </div>
     </div>
     <div class="flex items-center gap-2 flex-shrink-0">
       <button id="darkModeBtn" type="button" class="header-icon-btn hidden sm:inline" title="Toggle dark mode">🌙</button>
       <button id="settingsBtn" type="button" class="header-icon-btn" title="Brand settings">⚙</button>
-      <label for="apiKeyInput" class="text-xs text-slate-500 hidden md:inline">API Key</label>
+      <label for="apiKeyInput" class="text-xs text-subtle hidden md:inline">API Key</label>
       <input id="apiKeyInput" type="password" placeholder="Gemini API Key" autocomplete="off"
         class="input-field w-32 sm:w-44 md:w-52 px-3 py-1.5 text-sm" />
       <div id="statusDot" class="status-dot" title="API key status"></div>
     </div>
   </header>
 
-  <!-- Resizable workspace: top = vault + viewer | bottom = chat -->
-  <main id="workspace">
-
-    <!-- Top half: Asset list (25%) + Asset viewer (75%) -->
-    <div id="topPane" class="panel overflow-hidden" style="flex: 0 0 50%;">
-      <aside id="vaultPanel" class="flex flex-col min-h-0 border-r border-slate-100" style="flex: 0 0 25%;">
-        <div class="px-3 py-2 border-b border-slate-100 flex-shrink-0">
-          <h2 class="panel-label panel-label-accent">The Vault</h2>
-        </div>
-        <div id="uploadZone" class="upload-zone mx-2 mt-2 p-2.5 border-2 border-dashed border-slate-200 rounded-xl text-center cursor-pointer bg-slate-50/50 flex-shrink-0">
-          <input id="fileInput" type="file" multiple class="hidden" />
-          <p class="text-[11px] text-slate-500">Upload or drop files</p>
-        </div>
-        <div class="mx-2 mt-1.5 flex gap-1 flex-shrink-0">
-          <input id="linkInput" type="url" placeholder="Paste link…" class="input-field flex-1 min-w-0 px-2 py-1.5 text-[11px]" />
-          <button id="addLinkBtn" type="button" class="btn-diamond px-2 py-1.5 rounded-lg text-xs font-medium">+</button>
-        </div>
-        <div id="vaultList" class="flex-1 overflow-y-auto custom-scrollbar px-2 py-1.5 space-y-0.5 min-h-0">
-          <p id="vaultEmpty" class="text-[11px] text-slate-400 text-center py-4">No sources yet</p>
-        </div>
-      </aside>
-
-      <div id="handleVaultViewer" class="resize-handle resize-handle-v" title="Drag to resize vault / viewer"></div>
-
-      <section id="viewerPanel" class="flex flex-col min-h-0 min-w-0" style="flex: 1;">
-        <div class="px-3 py-2 border-b border-slate-100 flex items-center justify-between gap-2 flex-shrink-0 bg-white">
-          <h2 class="panel-label">Asset Viewer</h2>
-          <div id="viewerMeta" class="text-[10px] text-slate-400 truncate"></div>
-        </div>
-        <div id="viewerToolbar" class="hidden"></div>
-        <div id="pageTabs" class="px-3 py-1.5 flex gap-1 flex-wrap border-b border-slate-50 hidden flex-shrink-0 bg-white"></div>
-        <div id="viewerContent" class="flex-1 flex flex-col min-h-0 overflow-hidden p-2 bg-slate-50/40">
-          <div id="viewerEmpty" class="flex flex-col items-center justify-center flex-1 text-center py-8">
-            <svg class="w-10 h-10 mb-2 text-blue-200" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2L4 9L12 22L20 9L12 2Z" stroke="#93c5fd" stroke-width="1.5"/>
-            </svg>
-            <p class="text-xs text-slate-400">Select a source to preview</p>
-          </div>
-          <div id="viewerMediaWrap" class="hidden flex-1 min-h-0">
-            <div id="viewerMedia" class="flex items-center justify-center p-2"></div>
-          </div>
-          <pre id="viewerText" class="hidden flex-1 overflow-y-auto custom-scrollbar text-xs text-slate-600 whitespace-pre-wrap font-mono leading-relaxed bg-white p-3 rounded-xl border border-slate-100 min-h-0"></pre>
-          <div id="viewerArtifact" class="hidden flex-1 min-h-0 overflow-auto custom-scrollbar"></div>
-          <iframe id="viewerPdfFrame" class="hidden flex-1 min-h-0" title="PDF preview"></iframe>
-          <iframe id="viewerLinkFrame" class="hidden flex-1 min-h-0" title="Web preview" sandbox="allow-scripts allow-same-origin"></iframe>
-        </div>
-      </section>
-    </div>
-
-    <div id="handleTopChat" class="resize-handle resize-handle-h" title="Drag to resize workspace / chat"></div>
-
-    <!-- Bottom half: Chat -->
-    <section id="chatPanel" class="panel panel-main flex flex-col min-h-0 overflow-hidden" style="flex: 1;">
-      <div class="px-4 py-2.5 border-b border-slate-100 flex-shrink-0 bg-gradient-to-r from-white to-blue-50/30">
-        <div class="flex items-center justify-between gap-2 mb-1.5">
+  <div id="appShell" class="app-shell">
+    <!-- Vertical Power Tools sidebar -->
+    <aside id="toolsSidebar">
+      <div class="tools-sidebar-head">
+        <h2 class="brand-title">Power Tools</h2>
+        <p class="text-faint text-[10px] mt-0.5 tracking-wide">Trade · Marketing · Studio</p>
+      </div>
+      <div id="powerTools" class="custom-scrollbar">
           <div>
-            <h2 class="brand-title text-lg text-slate-800">The Chat Trader</h2>
-            <p class="text-[11px] text-slate-500">Your gemologist &amp; trade advisor</p>
-          </div>
-          <div id="loadingIndicator" class="hidden flex items-center gap-2 text-xs text-slate-500 bg-white px-3 py-1.5 rounded-full border border-slate-200">
-            <span class="loading-dot w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
-            <span id="loadingLabel">Analyzing…</span>
-          </div>
-          <button id="exportChatBtn" type="button" class="header-icon-btn" title="Export chat">Export chat</button>
-        </div>
-        <div id="powerTools" class="custom-scrollbar">
-          <div>
-            <p class="tool-section-label mb-1">Trade</p>
-            <div class="flex flex-wrap gap-1.5">
-              <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="trade" data-require-docs="1" data-prompt="Find matching pairs for earrings from all uploaded certs. They must have identical color, clarity, and table percentages within a 0.05mm structural tolerance.">Match pairs</button>
-              <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="trade" data-require-docs="1" data-prompt="Based on the attached Rapaport matrix, what is the maximum trade value for this stone given its fluorescence drawback?">Appraisal</button>
-              <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="compare" data-require-docs="2" data-copyable="true" data-prompt="Generate a side-by-side Markdown comparison table of ALL uploaded certificates. Columns: one per stone (use filename as header). Rows: Carat, Shape, Color, Clarity, Cut, Depth%, Table%, Polish, Symmetry, Fluorescence, Measurements. Bold the best value in each row. Cite every [filename].">Compare table</button>
-              <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="audit" data-require-docs="2" data-prompt="Run a full vault inventory audit on ALL uploaded certificates. Report shape/carat distribution, overstocked categories, missing trendy shapes (e.g. cushion, oval), and specific acquisition recommendations. Cite each [filename] with counts.">Blind spot audit</button>
-              <button class="chip text-xs px-2.5 py-1 rounded-full" id="pairMatcherBtn" data-require-docs="2">Pair matcher</button>
-              <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="trade" data-require-docs="2" data-prompt="Build a multi-stone parcel summary from ALL vault certificates. Include: total carat, stone count, shape mix, average color/clarity, individual stone table, suggested lot name, and export-ready lot description. Cite each [filename].">Parcel builder</button>
-              <button class="chip text-xs px-2.5 py-1 rounded-full" id="rapaportLookupBtn" data-require-docs="1">Rapaport lookup</button>
+            <p class="tool-section-label">Trade</p>
+            <div class="tool-btn-list">
+              <button class="feature-btn chip" data-mode="trade" data-require-docs="1" data-prompt="Find matching pairs for earrings from all uploaded certs. They must have identical color, clarity, and table percentages within a 0.05mm structural tolerance.">Match pairs</button>
+              <button class="feature-btn chip" data-mode="trade" data-require-docs="1" data-prompt="Based on the attached Rapaport matrix, what is the maximum trade value for this stone given its fluorescence drawback?">Appraisal</button>
+              <button class="feature-btn chip" data-mode="compare" data-require-docs="2" data-copyable="true" data-prompt="Generate a side-by-side Markdown comparison table of ALL uploaded certificates. Columns: one per stone (use filename as header). Rows: Carat, Shape, Color, Clarity, Cut, Depth%, Table%, Polish, Symmetry, Fluorescence, Measurements. Bold the best value in each row. Cite every [filename].">Compare table</button>
+              <button class="feature-btn chip" data-mode="audit" data-require-docs="2" data-prompt="Run a full vault inventory audit on ALL uploaded certificates. Report shape/carat distribution, overstocked categories, missing trendy shapes (e.g. cushion, oval), and specific acquisition recommendations. Cite each [filename] with counts.">Blind spot audit</button>
+              <button class="chip" id="pairMatcherBtn" data-require-docs="2">Pair matcher</button>
+              <button class="feature-btn chip" data-mode="trade" data-require-docs="2" data-prompt="Build a multi-stone parcel summary from ALL vault certificates. Include: total carat, stone count, shape mix, average color/clarity, individual stone table, suggested lot name, and export-ready lot description. Cite each [filename].">Parcel builder</button>
+              <button class="chip" id="rapaportLookupBtn" data-require-docs="1">Rapaport lookup</button>
             </div>
           </div>
           <div>
-            <p class="tool-section-label mb-1">Marketing</p>
-            <div class="flex flex-wrap gap-1.5">
-              <button class="feature-btn marketing chip text-xs px-2.5 py-1 rounded-full" data-mode="marketing" data-require-docs="1" data-copyable="true" data-use-selected="true" data-prompt="Act as a world-class luxury jewelry creative director. Using the certificate specs, produce exactly these three sections:
+            <p class="tool-section-label">Marketing</p>
+            <div class="tool-btn-list">
+              <button class="feature-btn marketing chip" data-mode="marketing" data-require-docs="1" data-copyable="true" data-use-selected="true" data-prompt="Act as a world-class luxury jewelry creative director. Using the certificate specs, produce exactly these three sections:
 
 ## 30-Second Reel/TikTok Script
 Scene-by-scene filming instructions with specific lighting angles to minimize visible inclusions and maximize brilliance for the cut grade.
@@ -875,58 +1076,128 @@ Two high-converting luxury captions with optimal hashtags.
 Three detailed prompts for Midjourney or DALL-E (macro photography, velvet/dark backgrounds, accurate carat/shape).
 
 Cite [filename] for every spec referenced.">Generate marketing</button>
-              <button class="feature-btn marketing chip text-xs px-2.5 py-1 rounded-full" data-mode="passport" data-require-docs="1" data-copyable="true" data-use-selected="true" data-export-html="true" data-prompt="Create a client-ready Diamond Passport — a romantic VIP email summary. Translate all technical jargon (VVS1, fluorescence, table %, etc.) into luxury consumer benefits. Structure: compelling opening hook, The Diamond Story (2-3 paragraphs), Key Benefits bullet list, elegant closing invitation. Ready to copy-paste into an email. Cite [filename].">Diamond passport</button>
+              <button class="feature-btn marketing chip" data-mode="passport" data-require-docs="1" data-copyable="true" data-use-selected="true" data-export-html="true" data-prompt="Create a client-ready Diamond Passport — a romantic VIP email summary. Translate all technical jargon (VVS1, fluorescence, table %, etc.) into luxury consumer benefits. Structure: compelling opening hook, The Diamond Story (2-3 paragraphs), Key Benefits bullet list, elegant closing invitation. Ready to copy-paste into an email. Cite [filename].">Diamond passport</button>
             </div>
           </div>
           <div>
-            <p class="tool-section-label mb-1">Sales</p>
-            <div class="flex flex-wrap gap-1.5">
-              <button class="feature-btn sales chip text-xs px-2.5 py-1 rounded-full" data-mode="negotiation" data-require-docs="1" data-use-selected="true" data-prompt="NEGOTIATION SIMULATOR START: You are now a skeptical, price-sensitive diamond buyer. Based on the certificate, identify this stone's weakest selling point and open with a realistic price objection (be tough but fair). Stay in buyer character. Cite [filename].">Negotiation sim</button>
-              <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="trade" data-prompt="What does medium fluorescence do to diamond trade value?">Fluorescence Q&amp;A</button>
+            <p class="tool-section-label">Sales</p>
+            <div class="tool-btn-list">
+              <button class="feature-btn sales chip" data-mode="negotiation" data-require-docs="1" data-use-selected="true" data-prompt="NEGOTIATION SIMULATOR START: You are now a skeptical, price-sensitive diamond buyer. Based on the certificate, identify this stone's weakest selling point and open with a realistic price objection (be tough but fair). Stay in buyer character. Cite [filename].">Negotiation sim</button>
+              <button class="feature-btn chip" data-mode="trade" data-prompt="What does medium fluorescence do to diamond trade value?">Fluorescence Q&amp;A</button>
             </div>
           </div>
           <div>
-            <p class="tool-section-label mb-1">Studio</p>
-            <div class="flex flex-wrap gap-1.5">
-              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="slides" data-output-type="json" data-require-docs="1" data-use-selected="true" data-prompt="Create a luxury diamond trade presentation slide deck from the uploaded certificate(s). Return ONLY valid JSON matching this schema: {&quot;title&quot;: string, &quot;theme&quot;: string, &quot;slides&quot;: [{&quot;title&quot;: string, &quot;bullets&quot;: string[], &quot;speakerNotes&quot;: string, &quot;visualHint&quot;: string}]}. Include 8-12 slides: cover, stone overview, 4Cs breakdown, proportions, trade positioning, Rapaport context if available, marketing angle, closing CTA. Cite [filename] in speakerNotes.">Slide deck</button>
-              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="report" data-output-type="markdown" data-require-docs="1" data-copyable="true" data-prompt="Generate a formal trade appraisal dossier report. Structure: # Cover title, ## Executive Summary, ## Stone Specifications (table), ## Rapaport &amp; Trade Valuation, ## Risk Factors, ## Recommendations, ## Citations. Professional B2B tone. Cite every [filename].">Trade report</button>
-              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="datatable" data-output-type="json" data-require-docs="1" data-prompt="Normalize ALL uploaded certificates into a machine-readable data table. Return ONLY valid JSON: {&quot;title&quot;: string, &quot;columns&quot;: string[], &quot;rows&quot;: string[][], &quot;rowHighlights&quot;: number[]}. Columns: Filename, Carat, Shape, Color, Clarity, Cut, Depth%, Table%, Polish, Symmetry, Fluorescence, Measurements. One row per stone. Highlight best value per metric in rowHighlights (row indices).">Data table</button>
-              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="infographic" data-output-type="json" data-require-docs="1" data-use-selected="true" data-prompt="Design a luxury diamond infographic layout. Return ONLY valid JSON: {&quot;title&quot;: string, &quot;subtitle&quot;: string, &quot;stats&quot;: [{&quot;label&quot;: string, &quot;value&quot;: string, &quot;accent&quot;: boolean}], &quot;callouts&quot;: string[], &quot;citations&quot;: string[], &quot;footer&quot;: string}. 4-6 stat blocks from cert data. Cite [filename].">Infographic</button>
-              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="video" data-output-type="json" data-require-docs="1" data-use-selected="true" data-try-veo="true" data-prompt="Create a complete 30-60 second luxury diamond video production kit. Return ONLY valid JSON: {&quot;title&quot;: string, &quot;script&quot;: string, &quot;scenes&quot;: [{&quot;sceneNum&quot;: number, &quot;duration&quot;: string, &quot;shot&quot;: string, &quot;lighting&quot;: string, &quot;onScreenText&quot;: string, &quot;audio&quot;: string}], &quot;srt&quot;: string, &quot;hashtags&quot;: string[], &quot;thumbnailPrompts&quot;: string[]}. Base on certificate specs. Cite [filename].">Video kit</button>
-              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="insurance" data-output-type="markdown" data-require-docs="1" data-use-selected="true" data-copyable="true" data-prompt="Write a formal insurance appraisal letter suitable for insurers. Include: date line, insured item description, replacement value methodology, detailed spec table, gemologist statement, limitations clause. Cite [filename].">Insurance letter</button>
-              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="rfq" data-output-type="markdown" data-require-docs="1" data-use-selected="true" data-copyable="true" data-prompt="Draft a professional B2B RFQ/supplier inquiry email requesting stones matching the uploaded certificate specs. Include subject line, greeting, spec requirements table, quantity, timeline, and closing. Cite [filename].">RFQ email</button>
-              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="whatsapp" data-output-type="markdown" data-require-docs="1" data-use-selected="true" data-copyable="true" data-prompt="Write a 2-3 sentence WhatsApp broker listing blurb for this stone. Trade-professional tone, include key specs and call-to-action. Cite [filename].">WhatsApp blurb</button>
-              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="pricememo" data-output-type="markdown" data-require-docs="1" data-use-selected="true" data-copyable="true" data-prompt="Create a one-page trade price memo with Rapaport reference, list price, negotiated range, fluorescence adjustment, and recommendation. B2B memo format. Cite [filename].">Price memo</button>
-              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="parcellabels" data-output-type="json" data-require-docs="1" data-prompt="Design printable parcel label specs for ALL vault certificates. Return ONLY valid JSON: {&quot;title&quot;: string, &quot;labels&quot;: [{&quot;filename&quot;: string, &quot;carat&quot;: string, &quot;shape&quot;: string, &quot;color&quot;: string, &quot;clarity&quot;: string, &quot;lotId&quot;: string, &quot;qrPlaceholder&quot;: string}]}.">Parcel labels</button>
-              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="qcchecklist" data-output-type="json" data-require-docs="1" data-use-selected="true" data-prompt="Create a pre-shipment QC checklist from the certificate. Return ONLY valid JSON: {&quot;title&quot;: string, &quot;columns&quot;: [&quot;Check&quot;, &quot;Spec&quot;, &quot;Pass/Fail&quot;, &quot;Notes&quot;], &quot;rows&quot;: string[][], &quot;rowHighlights&quot;: []}. Include measurement, color, clarity, polish, symmetry, fluorescence checks.">QC checklist</button>
-              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-vault-export="true">Vault CSV</button>
+            <p class="tool-section-label">Studio</p>
+            <div class="tool-btn-list">
+              <button class="feature-btn studio chip" data-studio="true" data-mode="slides" data-output-type="json" data-require-docs="1" data-use-selected="true" data-prompt="Create a luxury diamond trade presentation slide deck from the uploaded certificate(s). Return ONLY valid JSON matching this schema: {&quot;title&quot;: string, &quot;theme&quot;: string, &quot;slides&quot;: [{&quot;title&quot;: string, &quot;bullets&quot;: string[], &quot;speakerNotes&quot;: string, &quot;visualHint&quot;: string}]}. Include 8-12 slides: cover, stone overview, 4Cs breakdown, proportions, trade positioning, Rapaport context if available, marketing angle, closing CTA. Cite [filename] in speakerNotes.">Slide deck</button>
+              <button class="feature-btn studio chip" data-studio="true" data-mode="report" data-output-type="markdown" data-require-docs="1" data-copyable="true" data-prompt="Generate a formal trade appraisal dossier report. Structure: # Cover title, ## Executive Summary, ## Stone Specifications (table), ## Rapaport &amp; Trade Valuation, ## Risk Factors, ## Recommendations, ## Citations. Professional B2B tone. Cite every [filename].">Trade report</button>
+              <button class="feature-btn studio chip" data-studio="true" data-mode="datatable" data-output-type="json" data-require-docs="1" data-prompt="Normalize ALL uploaded certificates into a machine-readable data table. Return ONLY valid JSON: {&quot;title&quot;: string, &quot;columns&quot;: string[], &quot;rows&quot;: string[][], &quot;rowHighlights&quot;: number[]}. Columns: Filename, Carat, Shape, Color, Clarity, Cut, Depth%, Table%, Polish, Symmetry, Fluorescence, Measurements. One row per stone. Highlight best value per metric in rowHighlights (row indices).">Data table</button>
+              <button class="feature-btn studio chip" data-studio="true" data-mode="infographic" data-output-type="json" data-require-docs="1" data-use-selected="true" data-prompt="Design a luxury diamond infographic layout. Return ONLY valid JSON: {&quot;title&quot;: string, &quot;subtitle&quot;: string, &quot;stats&quot;: [{&quot;label&quot;: string, &quot;value&quot;: string, &quot;accent&quot;: boolean}], &quot;callouts&quot;: string[], &quot;citations&quot;: string[], &quot;footer&quot;: string}. 4-6 stat blocks from cert data. Cite [filename].">Infographic</button>
+              <button class="feature-btn studio chip" data-studio="true" data-mode="video" data-output-type="json" data-require-docs="1" data-use-selected="true" data-try-veo="true" data-prompt="Create a complete 30-60 second luxury diamond video production kit. Return ONLY valid JSON: {&quot;title&quot;: string, &quot;script&quot;: string, &quot;scenes&quot;: [{&quot;sceneNum&quot;: number, &quot;duration&quot;: string, &quot;shot&quot;: string, &quot;lighting&quot;: string, &quot;onScreenText&quot;: string, &quot;audio&quot;: string}], &quot;srt&quot;: string, &quot;hashtags&quot;: string[], &quot;thumbnailPrompts&quot;: string[]}. Base on certificate specs. Cite [filename].">Video kit</button>
+              <button class="feature-btn studio chip" data-studio="true" data-mode="insurance" data-output-type="markdown" data-require-docs="1" data-use-selected="true" data-copyable="true" data-prompt="Write a formal insurance appraisal letter suitable for insurers. Include: date line, insured item description, replacement value methodology, detailed spec table, gemologist statement, limitations clause. Cite [filename].">Insurance letter</button>
+              <button class="feature-btn studio chip" data-studio="true" data-mode="rfq" data-output-type="markdown" data-require-docs="1" data-use-selected="true" data-copyable="true" data-prompt="Draft a professional B2B RFQ/supplier inquiry email requesting stones matching the uploaded certificate specs. Include subject line, greeting, spec requirements table, quantity, timeline, and closing. Cite [filename].">RFQ email</button>
+              <button class="feature-btn studio chip" data-studio="true" data-mode="whatsapp" data-output-type="markdown" data-require-docs="1" data-use-selected="true" data-copyable="true" data-prompt="Write a 2-3 sentence WhatsApp broker listing blurb for this stone. Trade-professional tone, include key specs and call-to-action. Cite [filename].">WhatsApp blurb</button>
+              <button class="feature-btn studio chip" data-studio="true" data-mode="pricememo" data-output-type="markdown" data-require-docs="1" data-use-selected="true" data-copyable="true" data-prompt="Create a one-page trade price memo with Rapaport reference, list price, negotiated range, fluorescence adjustment, and recommendation. B2B memo format. Cite [filename].">Price memo</button>
+              <button class="feature-btn studio chip" data-studio="true" data-mode="parcellabels" data-output-type="json" data-require-docs="1" data-prompt="Design printable parcel label specs for ALL vault certificates. Return ONLY valid JSON: {&quot;title&quot;: string, &quot;labels&quot;: [{&quot;filename&quot;: string, &quot;carat&quot;: string, &quot;shape&quot;: string, &quot;color&quot;: string, &quot;clarity&quot;: string, &quot;lotId&quot;: string, &quot;qrPlaceholder&quot;: string}]}.">Parcel labels</button>
+              <button class="feature-btn studio chip" data-studio="true" data-mode="qcchecklist" data-output-type="json" data-require-docs="1" data-use-selected="true" data-prompt="Create a pre-shipment QC checklist from the certificate. Return ONLY valid JSON: {&quot;title&quot;: string, &quot;columns&quot;: [&quot;Check&quot;, &quot;Spec&quot;, &quot;Pass/Fail&quot;, &quot;Notes&quot;], &quot;rows&quot;: string[][], &quot;rowHighlights&quot;: []}. Include measurement, color, clarity, polish, symmetry, fluorescence checks.">QC checklist</button>
+              <button class="feature-btn studio chip" data-vault-export="true">Vault CSV</button>
             </div>
+          </div>
+        </div>
+    </aside>
+
+    <!-- Resizable workspace: top = vault + viewer | bottom = chat -->
+    <main id="workspace">
+
+    <!-- Top half: Asset list (25%) + Asset viewer (75%) -->
+    <div id="topPane" class="panel overflow-hidden" style="flex: 0 0 50%;">
+      <aside id="vaultPanel" class="flex flex-col min-h-0 border-r border-subtle" style="flex: 0 0 25%;">
+        <div class="panel-bar">
+          <h2 class="panel-label panel-label-accent">The Vault</h2>
+        </div>
+        <div id="uploadZone" class="upload-zone mx-2 mt-2 p-2.5 text-center cursor-pointer flex-shrink-0">
+          <input id="fileInput" type="file" multiple class="hidden" />
+          <p class="text-[11px] text-subtle">Upload or drop files</p>
+        </div>
+        <div class="mx-2 mt-1.5 flex gap-1 flex-shrink-0">
+          <input id="linkInput" type="url" placeholder="Paste link…" class="input-field flex-1 min-w-0 px-2 py-1.5 text-[11px]" />
+          <button id="addLinkBtn" type="button" class="btn-diamond px-2 py-1.5 rounded-lg text-xs font-medium">+</button>
+        </div>
+        <div id="vaultList" class="flex-1 overflow-y-auto custom-scrollbar px-2 py-1.5 space-y-0.5 min-h-0">
+          <p id="vaultEmpty" class="text-[11px] text-faint text-center py-4">No sources yet</p>
+        </div>
+      </aside>
+
+      <div id="handleVaultViewer" class="resize-handle resize-handle-v" title="Drag to resize vault / viewer"></div>
+
+      <section id="viewerPanel" class="flex flex-col min-h-0 min-w-0" style="flex: 1;">
+        <div class="panel-bar flex items-center justify-between gap-2">
+          <h2 class="panel-label">Asset Viewer</h2>
+          <div id="viewerMeta" class="text-[10px] text-faint truncate"></div>
+        </div>
+        <div id="viewerToolbar" class="hidden"></div>
+        <div id="pageTabs" class="px-3 py-1.5 flex gap-1 flex-wrap border-b border-subtle hidden flex-shrink-0 surface"></div>
+        <div id="viewerContent" class="flex-1 flex flex-col min-h-0 overflow-hidden p-2">
+          <div id="viewerEmpty" class="flex flex-col items-center justify-center flex-1 text-center py-8">
+            <svg class="w-10 h-10 mb-2 opacity-40" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L4 9L12 22L20 9L12 2Z" stroke="var(--accent)" stroke-width="1.5"/>
+            </svg>
+            <p class="text-xs text-faint">Select a source to preview</p>
+          </div>
+          <div id="viewerMediaWrap" class="hidden flex-1 min-h-0">
+            <div id="viewerMedia" class="flex items-center justify-center p-2"></div>
+          </div>
+          <pre id="viewerText" class="hidden flex-1 overflow-y-auto custom-scrollbar text-xs whitespace-pre-wrap font-mono leading-relaxed p-3 rounded-xl border border-subtle min-h-0"></pre>
+          <div id="viewerArtifact" class="hidden flex-1 min-h-0 overflow-auto custom-scrollbar"></div>
+          <iframe id="viewerPdfFrame" class="hidden flex-1 min-h-0" title="PDF preview"></iframe>
+          <iframe id="viewerLinkFrame" class="hidden flex-1 min-h-0" title="Web preview" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+      </section>
+    </div>
+
+    <div id="handleTopChat" class="resize-handle resize-handle-h" title="Drag to resize workspace / chat"></div>
+
+    <!-- Bottom half: Chat -->
+    <section id="chatPanel" class="panel panel-main flex flex-col min-h-0 overflow-hidden" style="flex: 1;">
+      <div class="chat-header px-4 py-3 flex-shrink-0">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <h2 class="brand-title text-lg text-default">The Chat Trader</h2>
+            <p class="text-[11px] text-subtle">Your gemologist &amp; trade advisor</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <div id="loadingIndicator" class="hidden flex items-center gap-2 text-xs px-3 py-1.5 rounded-full">
+              <span class="loading-dot w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
+              <span id="loadingLabel">Analyzing…</span>
+            </div>
+            <button id="exportChatBtn" type="button" class="header-icon-btn" title="Export chat">Export chat</button>
           </div>
         </div>
       </div>
 
-      <div id="chatMessages" class="flex-1 overflow-y-auto custom-scrollbar px-4 py-4 space-y-4 min-h-0 bg-slate-50/40"></div>
+      <div id="chatMessages" class="chat-messages-area flex-1 overflow-y-auto custom-scrollbar px-4 py-4 space-y-4 min-h-0"></div>
 
-      <div class="p-3 border-t border-slate-100 flex-shrink-0 bg-white">
+      <div class="chat-footer p-3 flex-shrink-0">
         <div class="chat-input-wrap flex gap-2 items-center">
           <input id="chatInput" type="text" placeholder="Ask your gemologist anything…"
-            class="flex-1 px-3 py-2.5 text-sm bg-transparent border-none focus:outline-none text-slate-800 placeholder-slate-400" />
+            class="flex-1 px-3 py-2.5 text-sm bg-transparent border-none focus:outline-none" />
           <button id="sendBtn" class="btn-diamond px-5 py-2.5 rounded-xl text-sm font-medium flex-shrink-0">Send</button>
         </div>
       </div>
     </section>
-  </main>
+    </main>
+  </div>
 
   <div id="toastContainer" class="fixed top-16 right-4 z-50 space-y-2 pointer-events-none"></div>
 
   <div id="settingsModal" class="settings-modal hidden">
     <div class="settings-panel">
-      <h3 class="brand-title text-lg text-slate-800 mb-3">Brand Settings</h3>
-      <label class="block text-xs text-slate-500 mb-1">Jeweler / company name</label>
+      <h3 class="brand-title text-lg text-default mb-3">Brand Settings</h3>
+      <label class="block form-label mb-1">Jeweler / company name</label>
       <input id="brandNameInput" type="text" placeholder="e.g. Maison Diamant" class="input-field w-full px-3 py-2 text-sm mb-3" />
-      <label class="block text-xs text-slate-500 mb-1">Tagline (optional)</label>
+      <label class="block form-label mb-1">Tagline (optional)</label>
       <input id="brandTaglineInput" type="text" placeholder="e.g. Certified Brilliance Since 1982" class="input-field w-full px-3 py-2 text-sm mb-3" />
-      <label class="block text-xs text-slate-500 mb-1">Logo (PNG/JPG)</label>
+      <label class="block form-label mb-1">Logo (PNG/JPG)</label>
       <input id="brandLogoInput" type="file" accept="image/*" class="text-xs mb-3 w-full" />
       <div id="brandLogoPreview" class="mb-3 hidden"><img id="brandLogoImg" class="h-10 object-contain" alt="Logo preview" /></div>
       <div class="flex gap-2 justify-end">
@@ -940,13 +1211,13 @@ Cite [filename] for every spec referenced.">Generate marketing</button>
     <div class="matcher-panel">
       <div class="flex justify-between items-center mb-3">
         <h3 class="brand-title text-lg">Smart Pair Matcher</h3>
-        <button id="matcherCloseBtn" type="button" class="text-slate-400 hover:text-slate-600 text-xl">&times;</button>
+        <button id="matcherCloseBtn" type="button" class="modal-close">&times;</button>
       </div>
       <div class="grid grid-cols-2 gap-3 mb-3">
-        <div><label class="text-xs text-slate-500">Stone A</label><select id="matcherStoneA" class="input-field w-full px-2 py-1.5 text-xs mt-1"></select></div>
-        <div><label class="text-xs text-slate-500">Stone B</label><select id="matcherStoneB" class="input-field w-full px-2 py-1.5 text-xs mt-1"></select></div>
+        <div><label class="form-label">Stone A</label><select id="matcherStoneA" class="input-field w-full px-2 py-1.5 text-xs mt-1"></select></div>
+        <div><label class="form-label">Stone B</label><select id="matcherStoneB" class="input-field w-full px-2 py-1.5 text-xs mt-1"></select></div>
       </div>
-      <div class="space-y-2 mb-3 text-xs">
+      <div class="space-y-2 mb-3 text-xs text-subtle">
         <label class="flex justify-between">Color tolerance (steps) <span id="tolColorVal">0</span></label>
         <input id="tolColor" type="range" min="0" max="3" value="0" class="w-full" />
         <label class="flex justify-between">Table % tolerance <span id="tolTableVal">0.5</span></label>
@@ -954,7 +1225,7 @@ Cite [filename] for every spec referenced.">Generate marketing</button>
         <label class="flex justify-between">Measurement mm tolerance <span id="tolMmVal">0.05</span></label>
         <input id="tolMm" type="range" min="1" max="20" value="5" class="w-full" />
       </div>
-      <div id="matcherResult" class="text-sm bg-slate-50 rounded-xl p-3 border border-slate-100 min-h-[80px]"></div>
+      <div id="matcherResult" class="text-sm matcher-result rounded-xl p-3 min-h-[80px]"></div>
     </div>
   </div>
 
@@ -1162,7 +1433,7 @@ When analyzing uploaded documents:
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
       const borderColor = type === 'error' ? 'border-red-200' : 'border-blue-200';
-      toast.className = `toast pointer-events-auto px-4 py-2.5 rounded-xl bg-white border ${borderColor} text-sm text-slate-700 shadow-lg max-w-xs`;
+      toast.className = `toast toast-item pointer-events-auto px-4 py-2.5 rounded-xl border ${borderColor} text-sm max-w-xs`;
       toast.textContent = message;
       container.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
@@ -1569,6 +1840,12 @@ When analyzing uploaded documents:
       if (localStorage.getItem(DARK_MODE_KEY) === '1') document.body.classList.add('dark-mode');
       const btn = document.getElementById('darkModeBtn');
       if (btn) btn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+      updateThemeColor();
+    }
+
+    function updateThemeColor() {
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.content = document.body.classList.contains('dark-mode') ? '#0a0f1a' : '#1d4ed8';
     }
 
     function toggleDarkMode() {
@@ -1576,12 +1853,13 @@ When analyzing uploaded documents:
       localStorage.setItem(DARK_MODE_KEY, document.body.classList.contains('dark-mode') ? '1' : '0');
       const btn = document.getElementById('darkModeBtn');
       if (btn) btn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+      updateThemeColor();
     }
 
     // ─── Collapsible tool sections ────────────────────────────────────────────────
     function initCollapsibleToolSections() {
       document.querySelectorAll('#powerTools > div').forEach((section, i) => {
-        if (i > 1) section.classList.add('tool-section-collapsed');
+        if (i > 0) section.classList.add('tool-section-collapsed');
         const label = section.querySelector('.tool-section-label');
         if (label) label.addEventListener('click', () => section.classList.toggle('tool-section-collapsed'));
       });
@@ -1609,7 +1887,7 @@ When analyzing uploaded documents:
       const bName = document.getElementById('matcherStoneB')?.value;
       const result = document.getElementById('matcherResult');
       if (!aName || !bName || aName === bName) {
-        result.innerHTML = '<p class="text-slate-400">Select two different stones.</p>';
+        result.innerHTML = '<p class="text-faint">Select two different stones.</p>';
         return;
       }
       const sa = docTextStore[aName]?.parsedSpecs || {};
@@ -1958,27 +2236,27 @@ When analyzing uploaded documents:
       docOrder.forEach(filename => {
         const doc = docTextStore[filename];
         const item = document.createElement('div');
-        item.className = `vault-item flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer transition-all border border-transparent hover:bg-white/5 ${selectedFilename === filename ? 'active' : ''}`;
+        item.className = `vault-item flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer transition-all border border-transparent ${selectedFilename === filename ? 'active' : ''}`;
         item.dataset.filename = filename;
 
-        const badgeColors = {
-          CERT: 'bg-blue-500/20 text-blue-300',
-          RAP: 'bg-emerald-500/20 text-emerald-300',
-          STOCK: 'bg-amber-500/20 text-amber-300',
-          LINK: 'bg-cyan-500/20 text-cyan-300',
-          PHOTO: 'bg-purple-500/20 text-purple-300',
-          VIDEO: 'bg-rose-500/20 text-rose-300',
-          AUDIO: 'bg-orange-500/20 text-orange-300',
-          DOC: 'bg-slate-500/20 text-slate-300',
-          FILE: 'bg-gray-500/20 text-gray-300',
-          GEN: 'bg-teal-500/20 text-teal-600'
+        const badgeMap = {
+          CERT: 'vault-badge-cert',
+          RAP: 'vault-badge-rap',
+          STOCK: 'vault-badge-stock',
+          LINK: 'vault-badge-link',
+          PHOTO: 'vault-badge-photo',
+          VIDEO: 'vault-badge-video',
+          AUDIO: 'vault-badge-audio',
+          DOC: 'vault-badge-doc',
+          FILE: 'vault-badge-file',
+          GEN: 'vault-badge-gen'
         };
-        const badgeClass = badgeColors[doc.badge] || badgeColors.FILE;
+        const badgeClass = badgeMap[doc.badge] || badgeMap.FILE;
 
         item.innerHTML = `
-          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${badgeClass} flex-shrink-0">${doc.badge}</span>
-          <span class="text-[11px] text-slate-700 truncate flex-1" title="${filename}">${filename}</span>
-          <button class="remove-btn text-slate-300 hover:text-red-400 flex-shrink-0 text-sm leading-none px-1" title="Remove">&times;</button>
+          <span class="vault-badge ${badgeClass}">${doc.badge}</span>
+          <span class="vault-filename truncate flex-1" title="${filename}">${filename}</span>
+          <button class="remove-btn vault-remove flex-shrink-0 text-sm leading-none px-1" title="Remove">&times;</button>
         `;
 
         item.addEventListener('click', (e) => {
@@ -2116,7 +2394,7 @@ When analyzing uploaded documents:
       group.className = 'viewer-tool-group';
       if (label) {
         const lbl = document.createElement('span');
-        lbl.className = 'text-[10px] text-slate-400 mr-1';
+        lbl.className = 'text-[10px] text-faint mr-1';
         lbl.textContent = label;
         group.appendChild(lbl);
       }
@@ -2227,7 +2505,7 @@ When analyzing uploaded documents:
       pageTabs.classList.remove('hidden');
       doc.pages.forEach(pg => {
         const tab = document.createElement('button');
-        tab.className = `page-tab text-xs px-2 py-1 rounded border border-slate-200 text-slate-500 transition-all ${pg.pageNum === selectedPage ? 'active' : ''}`;
+        tab.className = `page-tab text-xs px-2 py-1 rounded border border-subtle text-subtle transition-all ${pg.pageNum === selectedPage ? 'active' : ''}`;
         tab.textContent = `Page ${pg.pageNum}`;
         tab.addEventListener('click', () => {
           selectedPage = pg.pageNum;
@@ -2360,7 +2638,7 @@ When analyzing uploaded documents:
         viewerMedia.classList.remove('hidden');
         const wrap = document.createElement('div');
         wrap.className = 'w-full max-w-lg text-center p-4';
-        wrap.innerHTML = `<p class="text-sm text-slate-500 mb-4">${selectedFilename}</p>`;
+        wrap.innerHTML = `<p class="text-sm text-subtle mb-4">${selectedFilename}</p>`;
         const audio = document.createElement('audio');
         audio.src = doc.dataUrl;
         audio.controls = true;
@@ -2680,7 +2958,7 @@ When analyzing uploaded documents:
 
     function renderSlideCarousel(container, data) {
       const slides = data.slides || [];
-      if (!slides.length) { container.innerHTML = '<p class="text-xs text-slate-400">No slides</p>'; return; }
+      if (!slides.length) { container.innerHTML = '<p class="text-xs text-faint">No slides</p>'; return; }
       let idx = 0;
       container.innerHTML = '';
       const wrap = document.createElement('div');
@@ -2693,7 +2971,7 @@ When analyzing uploaded documents:
       prev.className = 'viewer-tool-btn';
       prev.textContent = '← Prev';
       const counter = document.createElement('span');
-      counter.className = 'text-xs text-slate-500';
+      counter.className = 'text-xs text-subtle';
       const next = document.createElement('button');
       next.className = 'viewer-tool-btn';
       next.textContent = 'Next →';
@@ -2762,12 +3040,12 @@ When analyzing uploaded documents:
         const vid = document.createElement('video');
         vid.src = artifact.videoMp4Url;
         vid.controls = true;
-        vid.className = 'w-full rounded-xl border border-slate-200 mb-2';
+        vid.className = 'w-full rounded-xl border border-subtle mb-2';
         wrap.appendChild(vid);
       }
       if (data.script) {
         const scriptEl = document.createElement('pre');
-        scriptEl.className = 'text-xs bg-white p-3 rounded-xl border whitespace-pre-wrap';
+        scriptEl.className = 'text-xs artifact-inline p-3 rounded-xl whitespace-pre-wrap';
         scriptEl.textContent = data.script;
         wrap.appendChild(scriptEl);
       }
@@ -2797,7 +3075,7 @@ When analyzing uploaded documents:
         renderVideoKitView(container, artifact);
       } else if (artifact.artifactType === 'report') {
         const pre = document.createElement('div');
-        pre.className = 'chat-md text-xs p-3 bg-white rounded-xl border';
+        pre.className = 'chat-md text-xs p-3 artifact-inline rounded-xl';
         pre.innerHTML = typeof marked !== 'undefined' ? marked.parse(d.markdown || '') : escapeHtml(d.markdown || '');
         container.appendChild(pre);
       }
@@ -3174,7 +3452,7 @@ When analyzing uploaded documents:
       wrap.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'}`;
 
       const div = document.createElement('div');
-      div.className = `rounded-2xl px-4 py-3 text-sm max-w-[88%] sm:max-w-[85%] ${role === 'user' ? 'msg-user text-slate-800' : 'msg-assistant text-slate-700'}`;
+      div.className = `rounded-2xl px-4 py-3 text-sm max-w-[88%] sm:max-w-[85%] ${role === 'user' ? 'msg-user' : 'msg-assistant'}`;
 
       if (role === 'user') {
         if (options.modeLabel) {
