@@ -588,6 +588,7 @@
       transition: background var(--transition);
       z-index: 10;
       position: relative;
+      touch-action: none;
     }
 
     .resize-handle:hover, .resize-handle.dragging {
@@ -2404,16 +2405,22 @@ When analyzing uploaded documents:
       } catch (_) { /* ignore */ }
     }
 
-    function setupResize(handle, onDelta, axis) {
-      let start = 0;
+    function setupResize(handle, config) {
+      const { axis, getStartPct, setPct, getContainerSize } = config;
       let dragging = false;
+      let startCoord = 0;
+      let startPct = 0;
 
       const onMove = (e) => {
         if (!dragging) return;
         const coord = axis === 'vertical' ? e.clientY : e.clientX;
-        const delta = coord - start;
-        start = coord;
-        onDelta(delta);
+        const delta = coord - startCoord;
+        const container = getContainerSize();
+        if (!container || container <= 0) return;
+        const nextPct = startPct + (delta / container) * 100;
+        setPct(nextPct);
+        applyLayout();
+        saveLayout();
       };
 
       const onUp = () => {
@@ -2428,7 +2435,8 @@ When analyzing uploaded documents:
       handle.addEventListener('mousedown', (e) => {
         e.preventDefault();
         dragging = true;
-        start = axis === 'vertical' ? e.clientY : e.clientX;
+        startCoord = axis === 'vertical' ? e.clientY : e.clientX;
+        startPct = getStartPct();
         handle.classList.add('dragging');
         document.body.style.cursor = axis === 'vertical' ? 'row-resize' : 'col-resize';
         document.body.style.userSelect = 'none';
@@ -2444,29 +2452,19 @@ When analyzing uploaded documents:
       const handleTopChat = document.getElementById('handleTopChat');
       const handleVaultViewer = document.getElementById('handleVaultViewer');
 
-      setupResize(handleTopChat, (dy) => {
-        const rect = workspace.getBoundingClientRect();
-        const handleH = handleTopChat.offsetHeight;
-        const avail = rect.height - handleH;
-        const topH = topPane.getBoundingClientRect().height + dy;
-        let pct = (topH / avail) * 100;
-        pct = Math.max(20, Math.min(80, pct));
-        layoutState.topPct = pct;
-        applyLayout();
-        saveLayout();
-      }, 'vertical');
+      setupResize(handleTopChat, {
+        axis: 'vertical',
+        getStartPct: () => layoutState.topPct,
+        setPct: (pct) => { layoutState.topPct = Math.max(20, Math.min(80, pct)); },
+        getContainerSize: () => workspace.getBoundingClientRect().height
+      });
 
-      setupResize(handleVaultViewer, (dx) => {
-        const rect = topPane.getBoundingClientRect();
-        const handleW = handleVaultViewer.offsetWidth;
-        const avail = rect.width - handleW;
-        const vaultW = vaultPanel.getBoundingClientRect().width + dx;
-        let pct = (vaultW / avail) * 100;
-        pct = Math.max(15, Math.min(55, pct));
-        layoutState.vaultPct = pct;
-        applyLayout();
-        saveLayout();
-      }, 'horizontal');
+      setupResize(handleVaultViewer, {
+        axis: 'horizontal',
+        getStartPct: () => layoutState.vaultPct,
+        setPct: (pct) => { layoutState.vaultPct = Math.max(15, Math.min(55, pct)); },
+        getContainerSize: () => topPane.getBoundingClientRect().width
+      });
     }
 
     // ─── Context builder for Gemini ─────────────────────────────────────────────
