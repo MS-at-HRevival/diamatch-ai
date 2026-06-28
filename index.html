@@ -694,7 +694,58 @@
     }
 
     .side-panel-collapsed { display: none !important; }
-  </style>
+
+    body.dark-mode {
+      --bg-base: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-muted: #334155;
+      --bg-chat: #1e293b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border: rgba(148, 163, 184, 0.15);
+    }
+    body.dark-mode { background: linear-gradient(160deg, #0f172a 0%, #1e293b 45%, #0f172a 100%); }
+    body.dark-mode header { background: rgba(30, 41, 59, 0.9); border-color: rgba(148, 163, 184, 0.15); }
+    body.dark-mode .panel { background: var(--bg-surface); color: var(--text-primary); }
+    body.dark-mode .input-field { background: #334155; color: #f1f5f9; border-color: var(--border); }
+    body.dark-mode .msg-user { background: #334155; }
+    body.dark-mode .msg-assistant { background: #1e293b; border-color: var(--border); }
+
+    .tool-section-collapsed .flex.flex-wrap { display: none !important; }
+    .tool-section-label { cursor: pointer; user-select: none; }
+    .tool-section-label::after { content: ' ▾'; opacity: 0.5; }
+    .tool-section-collapsed .tool-section-label::after { content: ' ▸'; }
+
+    .settings-modal {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(15, 23, 42, 0.45);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+    }
+    .settings-modal.hidden { display: none; }
+    .settings-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      width: 100%; max-width: 420px;
+      padding: 1.25rem;
+    }
+
+    .matcher-modal { position: fixed; inset: 0; z-index: 100; background: rgba(15,23,42,0.45); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .matcher-modal.hidden { display: none; }
+    .matcher-panel { background: var(--bg-surface); border-radius: var(--radius); max-width: 720px; width: 100%; max-height: 85vh; overflow: auto; padding: 1.25rem; border: 1px solid var(--border); }
+
+    .header-icon-btn {
+      font-size: 11px; padding: 6px 10px; border-radius: 8px;
+      border: 1px solid var(--border); background: #fff; color: var(--text-secondary);
+      cursor: pointer; transition: all var(--transition);
+    }
+    .header-icon-btn:hover { background: var(--accent-soft); color: var(--accent-deep); }
+    body.dark-mode .header-icon-btn { background: #334155; color: #e2e8f0; }
+
+    .cost-hint { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
 </head>
 <body class="flex flex-col h-screen">
 
@@ -711,6 +762,8 @@
       </div>
     </div>
     <div class="flex items-center gap-2 flex-shrink-0">
+      <button id="darkModeBtn" type="button" class="header-icon-btn hidden sm:inline" title="Toggle dark mode">🌙</button>
+      <button id="settingsBtn" type="button" class="header-icon-btn" title="Brand settings">⚙</button>
       <label for="apiKeyInput" class="text-xs text-slate-500 hidden md:inline">API Key</label>
       <input id="apiKeyInput" type="password" placeholder="Gemini API Key" autocomplete="off"
         class="input-field w-32 sm:w-44 md:w-52 px-3 py-1.5 text-sm" />
@@ -781,6 +834,7 @@
             <span class="loading-dot w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
             <span id="loadingLabel">Analyzing…</span>
           </div>
+          <button id="exportChatBtn" type="button" class="header-icon-btn" title="Export chat">Export chat</button>
         </div>
         <div id="powerTools" class="custom-scrollbar">
           <div>
@@ -790,6 +844,9 @@
               <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="trade" data-require-docs="1" data-prompt="Based on the attached Rapaport matrix, what is the maximum trade value for this stone given its fluorescence drawback?">Appraisal</button>
               <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="compare" data-require-docs="2" data-copyable="true" data-prompt="Generate a side-by-side Markdown comparison table of ALL uploaded certificates. Columns: one per stone (use filename as header). Rows: Carat, Shape, Color, Clarity, Cut, Depth%, Table%, Polish, Symmetry, Fluorescence, Measurements. Bold the best value in each row. Cite every [filename].">Compare table</button>
               <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="audit" data-require-docs="2" data-prompt="Run a full vault inventory audit on ALL uploaded certificates. Report shape/carat distribution, overstocked categories, missing trendy shapes (e.g. cushion, oval), and specific acquisition recommendations. Cite each [filename] with counts.">Blind spot audit</button>
+              <button class="chip text-xs px-2.5 py-1 rounded-full" id="pairMatcherBtn" data-require-docs="2">Pair matcher</button>
+              <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="trade" data-require-docs="2" data-prompt="Build a multi-stone parcel summary from ALL vault certificates. Include: total carat, stone count, shape mix, average color/clarity, individual stone table, suggested lot name, and export-ready lot description. Cite each [filename].">Parcel builder</button>
+              <button class="chip text-xs px-2.5 py-1 rounded-full" id="rapaportLookupBtn" data-require-docs="1">Rapaport lookup</button>
             </div>
           </div>
           <div>
@@ -807,7 +864,7 @@ Two high-converting luxury captions with optimal hashtags.
 Three detailed prompts for Midjourney or DALL-E (macro photography, velvet/dark backgrounds, accurate carat/shape).
 
 Cite [filename] for every spec referenced.">Generate marketing</button>
-              <button class="feature-btn marketing chip text-xs px-2.5 py-1 rounded-full" data-mode="passport" data-require-docs="1" data-copyable="true" data-use-selected="true" data-prompt="Create a client-ready Diamond Passport — a romantic VIP email summary. Translate all technical jargon (VVS1, fluorescence, table %, etc.) into luxury consumer benefits. Structure: compelling opening hook, The Diamond Story (2-3 paragraphs), Key Benefits bullet list, elegant closing invitation. Ready to copy-paste into an email. Cite [filename].">Diamond passport</button>
+              <button class="feature-btn marketing chip text-xs px-2.5 py-1 rounded-full" data-mode="passport" data-require-docs="1" data-copyable="true" data-use-selected="true" data-export-html="true" data-prompt="Create a client-ready Diamond Passport — a romantic VIP email summary. Translate all technical jargon (VVS1, fluorescence, table %, etc.) into luxury consumer benefits. Structure: compelling opening hook, The Diamond Story (2-3 paragraphs), Key Benefits bullet list, elegant closing invitation. Ready to copy-paste into an email. Cite [filename].">Diamond passport</button>
             </div>
           </div>
           <div>
@@ -851,6 +908,45 @@ Cite [filename] for every spec referenced.">Generate marketing</button>
 
   <div id="toastContainer" class="fixed top-16 right-4 z-50 space-y-2 pointer-events-none"></div>
 
+  <div id="settingsModal" class="settings-modal hidden">
+    <div class="settings-panel">
+      <h3 class="brand-title text-lg text-slate-800 mb-3">Brand Settings</h3>
+      <label class="block text-xs text-slate-500 mb-1">Jeweler / company name</label>
+      <input id="brandNameInput" type="text" placeholder="e.g. Maison Diamant" class="input-field w-full px-3 py-2 text-sm mb-3" />
+      <label class="block text-xs text-slate-500 mb-1">Tagline (optional)</label>
+      <input id="brandTaglineInput" type="text" placeholder="e.g. Certified Brilliance Since 1982" class="input-field w-full px-3 py-2 text-sm mb-3" />
+      <label class="block text-xs text-slate-500 mb-1">Logo (PNG/JPG)</label>
+      <input id="brandLogoInput" type="file" accept="image/*" class="text-xs mb-3 w-full" />
+      <div id="brandLogoPreview" class="mb-3 hidden"><img id="brandLogoImg" class="h-10 object-contain" alt="Logo preview" /></div>
+      <div class="flex gap-2 justify-end">
+        <button id="settingsCloseBtn" type="button" class="btn-ghost px-3 py-1.5 rounded-lg text-xs">Cancel</button>
+        <button id="settingsSaveBtn" type="button" class="btn-diamond px-3 py-1.5 rounded-lg text-xs">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="matcherModal" class="matcher-modal hidden">
+    <div class="matcher-panel">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="brand-title text-lg">Smart Pair Matcher</h3>
+        <button id="matcherCloseBtn" type="button" class="text-slate-400 hover:text-slate-600 text-xl">&times;</button>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div><label class="text-xs text-slate-500">Stone A</label><select id="matcherStoneA" class="input-field w-full px-2 py-1.5 text-xs mt-1"></select></div>
+        <div><label class="text-xs text-slate-500">Stone B</label><select id="matcherStoneB" class="input-field w-full px-2 py-1.5 text-xs mt-1"></select></div>
+      </div>
+      <div class="space-y-2 mb-3 text-xs">
+        <label class="flex justify-between">Color tolerance (steps) <span id="tolColorVal">0</span></label>
+        <input id="tolColor" type="range" min="0" max="3" value="0" class="w-full" />
+        <label class="flex justify-between">Table % tolerance <span id="tolTableVal">0.5</span></label>
+        <input id="tolTable" type="range" min="0" max="20" value="5" class="w-full" />
+        <label class="flex justify-between">Measurement mm tolerance <span id="tolMmVal">0.05</span></label>
+        <input id="tolMm" type="range" min="1" max="20" value="5" class="w-full" />
+      </div>
+      <div id="matcherResult" class="text-sm bg-slate-50 rounded-xl p-3 border border-slate-100 min-h-[80px]"></div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
     // ─── Global state ───────────────────────────────────────────────────────────
@@ -873,6 +969,18 @@ Cite [filename] for every spec referenced.">Generate marketing</button>
     const MAX_DOC_CHARS = 30000;
     const MAX_HISTORY_TURNS = 8;
     const MAX_INLINE_MEDIA = 8;
+    const VAULT_DB_NAME = 'diamatch_vault_v1';
+    const BRAND_STORAGE_KEY = 'diamatch_brand_v1';
+    const DARK_MODE_KEY = 'diamatch_dark';
+    const CHAT_EXPORT_KEY = 'diamatch_chat_log';
+
+    let brandSettings = { jewelerName: '', tagline: '', logoDataUrl: '' };
+    let rapaportMatrix = null;
+    let rapaportSourceFile = null;
+    let vaultDb = null;
+    let persistVaultTimer = null;
+    let currentSlideIndex = 0;
+    let lastPassportHtml = '';
 
     const MIME_BY_EXT = {
       pdf: 'application/pdf',
@@ -1229,6 +1337,405 @@ When analyzing uploaded documents:
       return { pages, fullText, numPages: pdf.numPages };
     }
 
+    async function renderPdfPageToDataUrl(arrayBuffer, pageNum = 1) {
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const page = await pdf.getPage(Math.min(pageNum, pdf.numPages));
+      const viewport = page.getViewport({ scale: 2 });
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+      return canvas.toDataURL('image/png');
+    }
+
+    async function geminiVisionJson(prompt, parts) {
+      const apiKey = getApiKey();
+      if (!apiKey) return null;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [...parts, { text: prompt }] }],
+          generationConfig: { responseMimeType: 'application/json', temperature: 0.1, maxOutputTokens: 2048 }
+        })
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text) return null;
+      try {
+        return JSON.parse(text.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim());
+      } catch (_) { return null; }
+    }
+
+    const OCR_SCHEMA_PROMPT = `Extract diamond grading certificate data. Return ONLY JSON: {"carat":"","shape":"","color":"","clarity":"","cut":"","depthPercent":"","tablePercent":"","polish":"","symmetry":"","fluorescence":"","measurements":"","reportNumber":"","lab":"","summary":""}. Use empty string for missing fields. summary should be a readable paragraph of all extracted specs.`;
+
+    async function ocrCertificateSpecs(filename, base64, mimeType, arrayBuffer) {
+      if (!getApiKey()) {
+        showToast('Add API key to run certificate OCR', 'error');
+        return null;
+      }
+      showToast(`Running OCR on ${filename}…`);
+      const parts = [{ inline_data: { mime_type: mimeType, data: base64 } }];
+      let specs = await geminiVisionJson(OCR_SCHEMA_PROMPT, parts);
+      if (!specs && arrayBuffer && mimeType === 'application/pdf') {
+        try {
+          const pageImg = await renderPdfPageToDataUrl(arrayBuffer, 1);
+          const b64 = pageImg.split(',')[1];
+          specs = await geminiVisionJson(OCR_SCHEMA_PROMPT, [{ inline_data: { mime_type: 'image/png', data: b64 } }]);
+        } catch (_) { /* fallback failed */ }
+      }
+      if (!specs) {
+        showToast('OCR could not extract certificate data', 'error');
+        return null;
+      }
+      showToast(`OCR complete for ${filename}`);
+      return specs;
+    }
+
+    function formatSpecsAsText(specs, filename) {
+      const lines = [
+        `=== OCR Extracted: ${filename} ===`,
+        `Lab: ${specs.lab || '—'} | Report: ${specs.reportNumber || '—'}`,
+        `Carat: ${specs.carat} | Shape: ${specs.shape} | Color: ${specs.color} | Clarity: ${specs.clarity}`,
+        `Cut: ${specs.cut} | Depth: ${specs.depthPercent}% | Table: ${specs.tablePercent}%`,
+        `Polish: ${specs.polish} | Symmetry: ${specs.symmetry} | Fluorescence: ${specs.fluorescence}`,
+        `Measurements: ${specs.measurements}`,
+        specs.summary ? `\n${specs.summary}` : ''
+      ];
+      return lines.filter(Boolean).join('\n');
+    }
+
+    function parseRapaportCsv(text, filename) {
+      const lines = text.trim().split(/\r?\n/).filter(l => l.trim());
+      if (lines.length < 2) return null;
+      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+      const rows = lines.slice(1).map(line => {
+        const cols = line.split(',').map(c => c.trim());
+        const row = {};
+        headers.forEach((h, i) => { row[h] = cols[i] || ''; });
+        return row;
+      });
+      rapaportMatrix = { headers, rows, filename, parsedAt: Date.now() };
+      rapaportSourceFile = filename;
+      showToast(`Rapaport matrix loaded: ${rows.length} rows from ${filename}`);
+      return rapaportMatrix;
+    }
+
+    function lookupRapaport(carat, color, clarity) {
+      if (!rapaportMatrix?.rows?.length) return null;
+      const c = parseFloat(carat);
+      if (isNaN(c)) return null;
+      const colorU = (color || '').toUpperCase();
+      const clarityU = (clarity || '').toUpperCase();
+      let best = null;
+      let bestDiff = Infinity;
+      rapaportMatrix.rows.forEach(row => {
+        const rowCarat = parseFloat(row.carat || row.size || row['carat weight'] || '');
+        if (isNaN(rowCarat)) return;
+        const diff = Math.abs(rowCarat - c);
+        const rowColor = (row.color || row.col || '').toUpperCase();
+        const rowClarity = (row.clarity || row.cl || '').toUpperCase();
+        if (colorU && rowColor && rowColor !== colorU) return;
+        if (clarityU && rowClarity && rowClarity !== clarityU) return;
+        if (diff < bestDiff) { bestDiff = diff; best = row; }
+      });
+      return best;
+    }
+
+    function buildRapaportContext() {
+      if (!rapaportMatrix) return '';
+      return `\n=== RAPAPORT MATRIX (${rapaportSourceFile}) ===\n${rapaportMatrix.rows.length} price rows loaded. Use lookupRapaport data when appraising.\n`;
+    }
+
+    // ─── IndexedDB vault persistence ─────────────────────────────────────────────
+    function openVaultDb() {
+      if (vaultDb) return Promise.resolve(vaultDb);
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(VAULT_DB_NAME, 1);
+        req.onupgradeneeded = () => {
+          const db = req.result;
+          if (!db.objectStoreNames.contains('entries')) db.createObjectStore('entries', { keyPath: 'filename' });
+          if (!db.objectStoreNames.contains('state')) db.createObjectStore('state', { keyPath: 'key' });
+        };
+        req.onsuccess = () => { vaultDb = req.result; resolve(vaultDb); };
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    function serializeDocForStorage(doc) {
+      const copy = { ...doc };
+      delete copy.arrayBuffer;
+      return copy;
+    }
+
+    function schedulePersistVault() {
+      clearTimeout(persistVaultTimer);
+      persistVaultTimer = setTimeout(persistVaultFull, 800);
+    }
+
+    async function persistVaultFull() {
+      try {
+        const db = await openVaultDb();
+        const tx = db.transaction(['entries', 'state'], 'readwrite');
+        const entryStore = tx.objectStore('entries');
+        docOrder.forEach(filename => {
+          const doc = docTextStore[filename];
+          if (!doc || doc.type === 'artifact') return;
+          entryStore.put({ filename, doc: serializeDocForStorage(doc) });
+        });
+        tx.objectStore('state').put({ key: 'order', value: docOrder.filter(f => docTextStore[f]?.type !== 'artifact') });
+        tx.objectStore('state').put({ key: 'selected', value: selectedFilename });
+      } catch (err) { console.warn('Vault persist failed', err); }
+    }
+
+    async function restoreVaultFromDb() {
+      try {
+        const db = await openVaultDb();
+        const tx = db.transaction(['entries', 'state'], 'readonly');
+        const orderReq = tx.objectStore('state').get('order');
+        const order = await new Promise((res, rej) => { orderReq.onsuccess = () => res(orderReq.result?.value || []); orderReq.onerror = rej; });
+        if (!order.length) return;
+        const entryStore = tx.objectStore('entries');
+        for (const filename of order) {
+          const entry = await new Promise((res, rej) => {
+            const r = entryStore.get(filename);
+            r.onsuccess = () => res(r.result);
+            r.onerror = rej;
+          });
+          if (entry?.doc) {
+            docTextStore[filename] = entry.doc;
+            if (!docOrder.includes(filename)) docOrder.push(filename);
+            if (entry.doc.badge === 'RAP' && entry.doc.fullText) parseRapaportCsv(entry.doc.fullText, filename);
+          }
+        }
+        const selReq = tx.objectStore('state').get('selected');
+        selReq.onsuccess = () => {
+          if (selReq.result?.value && docTextStore[selReq.result.value]) selectedFilename = selReq.result.value;
+          else if (docOrder.length) selectedFilename = docOrder[0];
+          renderVault();
+          renderViewer();
+          if (docOrder.length) showToast(`Restored ${docOrder.length} vault item(s) from last session`);
+        };
+      } catch (err) { console.warn('Vault restore failed', err); }
+    }
+
+    // ─── Brand settings ───────────────────────────────────────────────────────────
+    function loadBrandSettings() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(BRAND_STORAGE_KEY));
+        if (saved) brandSettings = { ...brandSettings, ...saved };
+      } catch (_) { /* ignore */ }
+      const nameEl = document.getElementById('brandNameInput');
+      const tagEl = document.getElementById('brandTaglineInput');
+      if (nameEl) nameEl.value = brandSettings.jewelerName || '';
+      if (tagEl) tagEl.value = brandSettings.tagline || '';
+      if (brandSettings.logoDataUrl) {
+        const prev = document.getElementById('brandLogoPreview');
+        const img = document.getElementById('brandLogoImg');
+        if (prev && img) { img.src = brandSettings.logoDataUrl; prev.classList.remove('hidden'); }
+      }
+    }
+
+    function saveBrandSettings() {
+      brandSettings.jewelerName = document.getElementById('brandNameInput')?.value.trim() || '';
+      brandSettings.tagline = document.getElementById('brandTaglineInput')?.value.trim() || '';
+      localStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify(brandSettings));
+      document.getElementById('settingsModal')?.classList.add('hidden');
+      showToast('Brand settings saved');
+    }
+
+    function getBrandHeaderHtml() {
+      const name = brandSettings.jewelerName || 'DiaMatch AI';
+      const tag = brandSettings.tagline ? `<p style="font-size:11px;color:#64748b;margin:4px 0 0">${escapeHtml(brandSettings.tagline)}</p>` : '';
+      const logo = brandSettings.logoDataUrl ? `<img src="${brandSettings.logoDataUrl}" style="height:36px;margin-bottom:8px" alt="logo"/>` : '';
+      return `${logo}<h1 style="font-family:Georgia,serif;font-size:22px;margin:0;color:#1e3a5f">${escapeHtml(name)}</h1>${tag}`;
+    }
+
+    // ─── Dark mode ────────────────────────────────────────────────────────────────
+    function initDarkMode() {
+      if (localStorage.getItem(DARK_MODE_KEY) === '1') document.body.classList.add('dark-mode');
+      const btn = document.getElementById('darkModeBtn');
+      if (btn) btn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      localStorage.setItem(DARK_MODE_KEY, document.body.classList.contains('dark-mode') ? '1' : '0');
+      const btn = document.getElementById('darkModeBtn');
+      if (btn) btn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+    }
+
+    // ─── Collapsible tool sections ────────────────────────────────────────────────
+    function initCollapsibleToolSections() {
+      document.querySelectorAll('#powerTools > div').forEach((section, i) => {
+        if (i > 1) section.classList.add('tool-section-collapsed');
+        const label = section.querySelector('.tool-section-label');
+        if (label) label.addEventListener('click', () => section.classList.toggle('tool-section-collapsed'));
+      });
+    }
+
+    // ─── Pair matcher ─────────────────────────────────────────────────────────────
+    const COLOR_SCALE = ['D','E','F','G','H','I','J','K','L','M','N'];
+
+    function getCertFilenames() {
+      return docOrder.filter(f => {
+        const d = docTextStore[f];
+        return d && (d.parsedSpecs || d.badge === 'CERT' || d.type === 'pdf');
+      });
+    }
+
+    function colorDistance(a, b) {
+      const ia = COLOR_SCALE.indexOf((a || '').toUpperCase());
+      const ib = COLOR_SCALE.indexOf((b || '').toUpperCase());
+      if (ia < 0 || ib < 0) return 0;
+      return Math.abs(ia - ib);
+    }
+
+    function runPairMatch() {
+      const aName = document.getElementById('matcherStoneA')?.value;
+      const bName = document.getElementById('matcherStoneB')?.value;
+      const result = document.getElementById('matcherResult');
+      if (!aName || !bName || aName === bName) {
+        result.innerHTML = '<p class="text-slate-400">Select two different stones.</p>';
+        return;
+      }
+      const sa = docTextStore[aName]?.parsedSpecs || {};
+      const sb = docTextStore[bName]?.parsedSpecs || {};
+      const tolColor = parseInt(document.getElementById('tolColor')?.value || '0', 10);
+      const tolTable = parseInt(document.getElementById('tolTable')?.value || '5', 10) / 10;
+      const tolMm = parseInt(document.getElementById('tolMm')?.value || '5', 10) / 100;
+      const checks = [];
+      let pass = 0;
+      if (sa.color && sb.color) {
+        const d = colorDistance(sa.color, sb.color);
+        const ok = d <= tolColor;
+        if (ok) pass++;
+        checks.push(`Color: ${sa.color} vs ${sb.color} (${d} steps) — ${ok ? '✓' : '✗'}`);
+      }
+      if (sa.clarity && sb.clarity) {
+        const ok = sa.clarity.toUpperCase() === sb.clarity.toUpperCase();
+        if (ok) pass++;
+        checks.push(`Clarity: ${sa.clarity} vs ${sb.clarity} — ${ok ? '✓' : '✗'}`);
+      }
+      const ta = parseFloat(sa.tablePercent), tb = parseFloat(sb.tablePercent);
+      if (!isNaN(ta) && !isNaN(tb)) {
+        const diff = Math.abs(ta - tb);
+        const ok = diff <= tolTable;
+        if (ok) pass++;
+        checks.push(`Table %: ${ta} vs ${tb} (Δ${diff.toFixed(2)}) — ${ok ? '✓' : '✗'}`);
+      }
+      const score = checks.length ? Math.round((pass / checks.length) * 100) : 0;
+      const verdict = score >= 80 ? '<span style="color:#16a34a;font-weight:600">Strong pair match</span>' : score >= 50 ? '<span style="color:#ca8a04">Partial match</span>' : '<span style="color:#dc2626">Poor match</span>';
+      result.innerHTML = `<p class="mb-2">${verdict} — ${score}% (${pass}/${checks.length} criteria)</p><ul class="text-xs space-y-1">${checks.map(c => `<li>${c}</li>`).join('')}</ul>`;
+    }
+
+    function openPairMatcher() {
+      if (docOrder.length < 2) { showToast('Add at least 2 certificates', 'error'); return; }
+      const certs = getCertFilenames();
+      if (certs.length < 2) { showToast('Need 2+ certs with parsed specs (run OCR if scanned)', 'error'); return; }
+      const selA = document.getElementById('matcherStoneA');
+      const selB = document.getElementById('matcherStoneB');
+      [selA, selB].forEach(sel => {
+        sel.innerHTML = certs.map(f => {
+          const s = docTextStore[f]?.parsedSpecs;
+          const label = s ? `${f} (${s.carat}ct ${s.color}/${s.clarity})` : f;
+          return `<option value="${f}">${label}</option>`;
+        }).join('');
+      });
+      if (selB.options.length > 1) selB.selectedIndex = 1;
+      document.getElementById('matcherModal')?.classList.remove('hidden');
+      runPairMatch();
+    }
+
+    // ─── Chat export ──────────────────────────────────────────────────────────────
+    function exportChatMarkdown() {
+      const lines = [];
+      chatMessages.querySelectorAll('.flex').forEach(wrap => {
+        const bubble = wrap.querySelector('.rounded-2xl');
+        if (!bubble) return;
+        const isUser = wrap.classList.contains('justify-end');
+        const text = bubble.textContent?.trim();
+        if (text) lines.push(isUser ? `**You:** ${text}` : `**Gemologist:** ${text}`);
+      });
+      downloadBlob(new Blob([lines.join('\n\n')], { type: 'text/markdown' }), `diamatch-chat-${Date.now()}.md`);
+      showToast('Chat exported as Markdown');
+    }
+
+    async function exportChatPdf() {
+      await loadExportLib('html2pdf');
+      const wrap = document.createElement('div');
+      wrap.style.padding = '20px';
+      wrap.style.fontFamily = 'Inter, sans-serif';
+      wrap.style.fontSize = '12px';
+      wrap.innerHTML = getBrandHeaderHtml() + '<hr style="margin:12px 0"/>' + chatMessages.innerHTML;
+      await html2pdf().set({ margin: 10, filename: `diamatch-chat-${Date.now()}.pdf` }).from(wrap).save();
+      showToast('Chat exported as PDF');
+    }
+
+    function exportPassportHtml(markdown) {
+      const body = typeof marked !== 'undefined' ? marked.parse(markdown) : escapeHtml(markdown);
+      const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Diamond Passport</title></head><body style="font-family:Georgia,serif;max-width:600px;margin:0 auto;padding:32px;background:#fafafa;color:#1e293b">${getBrandHeaderHtml()}<div style="margin-top:24px;line-height:1.7">${body}</div><p style="margin-top:32px;font-size:11px;color:#94a3b8">Generated by DiaMatch AI</p></body></html>`;
+      downloadBlob(new Blob([html], { type: 'text/html' }), `diamond-passport-${Date.now()}.html`);
+      showToast('Email-ready HTML downloaded');
+    }
+
+    function estimateStudioTokens(options) {
+      const ctxLen = buildDocumentContext().length + (options?.prompt?.length || 500);
+      const est = Math.ceil(ctxLen / 4) + 2000;
+      return `~${(est / 1000).toFixed(1)}k tokens est.`;
+    }
+
+    async function tryGenerateHeroImage(prompt) {
+      const apiKey = getApiKey();
+      if (!apiKey) return null;
+      const models = ['gemini-2.0-flash-preview-image-generation', 'imagen-3.0-generate-002'];
+      for (const model of models) {
+        try {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ role: 'user', parts: [{ text: prompt || 'Luxury diamond macro photography on dark velvet, brilliant cut, professional jewelry lighting' }] }],
+              generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
+            })
+          });
+          if (!res.ok) continue;
+          const data = await res.json();
+          const parts = data?.candidates?.[0]?.content?.parts || [];
+          for (const p of parts) {
+            if (p.inlineData?.data) return `data:${p.inlineData.mimeType || 'image/png'};base64,${p.inlineData.data}`;
+          }
+        } catch (_) { /* try next */ }
+      }
+      return null;
+    }
+
+    function encodeShareLink(artifactId) {
+      const artifact = artifactStore[artifactId];
+      if (!artifact) return;
+      const payload = { t: artifact.title, m: artifact.artifactType, d: artifact.data };
+      try {
+        const hash = '#share=' + btoa(unescape(encodeURIComponent(JSON.stringify(payload).slice(0, 8000))));
+        const url = location.origin + location.pathname + hash;
+        copyToClipboard(url);
+        showToast('Share link copied (read-only preview in URL)');
+      } catch (_) { showToast('Share link too large', 'error'); }
+    }
+
+    function decodeShareLink() {
+      const m = location.hash.match(/^#share=(.+)$/);
+      if (!m) return;
+      try {
+        const payload = JSON.parse(decodeURIComponent(escape(atob(m[1]))));
+        const artifact = createArtifact('share', payload.d, payload.t);
+        openArtifactInViewer(artifact.id);
+        history.replaceState(null, '', location.pathname);
+      } catch (_) { /* invalid share */ }
+    }
+
     function truncateText(text) {
       if (text.length <= MAX_DOC_CHARS) return { text, truncated: false };
       return { text: text.slice(0, MAX_DOC_CHARS) + '\n\n[truncated — document exceeds context limit]', truncated: true };
@@ -1280,15 +1787,25 @@ When analyzing uploaded documents:
             hasText,
             base64: b64,
             arrayBuffer: buffer,
-            geminiInline: true
+            geminiInline: true,
+            parsedSpecs: null
           };
           if (!hasText) {
-            showToast(`${filename}: no extractable text — Gemini will use visual PDF analysis`, 'error');
+            const specs = await ocrCertificateSpecs(filename, b64, 'application/pdf', buffer);
+            if (specs) {
+              docTextStore[filename].parsedSpecs = specs;
+              docTextStore[filename].fullText = formatSpecsAsText(specs, filename);
+              docTextStore[filename].hasText = true;
+              docTextStore[filename].ocrSource = true;
+            } else {
+              showToast(`${filename}: scanned PDF — add API key for OCR extraction`, 'error');
+            }
           }
         } else if (category === 'text') {
           const buffer = await readFileAsArrayBuffer(file);
           const rawText = new TextDecoder('utf-8').decode(buffer);
           const { text } = truncateText(rawText);
+          const isRap = inferBadge(filename, category) === 'RAP' || filename.toLowerCase().includes('rapaport');
           docTextStore[filename] = {
             ...baseEntry,
             type: 'text',
@@ -1296,6 +1813,7 @@ When analyzing uploaded documents:
             hasText: text.length > 0,
             arrayBuffer: buffer
           };
+          if (isRap || ext === 'csv') parseRapaportCsv(text, filename);
         } else if (category === 'image') {
           const buffer = await readFileAsArrayBuffer(file);
           const b64 = arrayBufferToBase64(buffer);
@@ -1361,6 +1879,7 @@ When analyzing uploaded documents:
         if (!selectedFilename) selectedFilename = filename;
         renderVault();
         if (selectedFilename === filename) renderViewer();
+        schedulePersistVault();
         showToast(`${filename} added to The Vault`);
       } catch (err) {
         console.error(err);
@@ -1411,6 +1930,7 @@ When analyzing uploaded documents:
       }
       renderVault();
       renderViewer();
+      schedulePersistVault();
     }
 
     function selectDocument(filename) {
@@ -1949,9 +2469,19 @@ When analyzing uploaded documents:
         if (doc.type === 'url' && doc.url) {
           block += `--- ${filename} (link) ---\nURL: ${doc.url}\n${text}\n\n`;
         } else {
-          block += `--- ${filename} (${doc.type}) ---\n${text}\n\n`;
+          block += `--- ${filename} (${doc.type}) ---\n${text}\n`;
+          if (doc.parsedSpecs) {
+            const s = doc.parsedSpecs;
+            block += `Structured specs: ${s.carat}ct ${s.shape} ${s.color}/${s.clarity} table ${s.tablePercent}% depth ${s.depthPercent}%\n`;
+            if (s.carat && s.color && s.clarity && rapaportMatrix) {
+              const row = lookupRapaport(s.carat, s.color, s.clarity);
+              if (row) block += `Rapaport lookup: ${JSON.stringify(row)}\n`;
+            }
+          }
+          block += '\n';
         }
       });
+      block += buildRapaportContext();
       block += '=== END DOCUMENTS ===\n\n';
       return block;
     }
@@ -2034,7 +2564,7 @@ When analyzing uploaded documents:
       return `**${data.title || 'Generated artifact'}** ready. Open in Viewer or Download.`;
     }
 
-    function createArtifact(mode, data, title) {
+    function createArtifact(mode, data, title, meta = {}) {
       artifactCounter++;
       const id = `GEN-${mode}-${Date.now()}-${artifactCounter}`;
       const artifactType = STUDIO_ARTIFACT_TYPES[mode] || 'report';
@@ -2047,7 +2577,9 @@ When analyzing uploaded documents:
         createdAt: Date.now(),
         videoMp4Blob: null,
         videoMp4Url: null,
-        heroImageDataUrl: null
+        heroImageDataUrl: null,
+        lastPrompt: meta.lastPrompt || null,
+        lastOptions: meta.lastOptions || null
       };
       artifactStore[id] = artifact;
       return artifact;
@@ -2120,7 +2652,7 @@ When analyzing uploaded documents:
         <p style="color:#64748b;font-size:0.8rem;margin:0 0 16px">${escapeHtml(data.subtitle || '')}</p>
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px">${stats}</div>
         ${callouts ? `<ul style="font-size:0.75rem;color:#475569;padding-left:18px;margin:0 0 12px">${callouts}</ul>` : ''}
-        <div style="font-size:0.65rem;color:#94a3b8;border-top:1px solid rgba(15,23,42,0.08);padding-top:8px">${escapeHtml(data.footer || '')}</div>
+        <div style="font-size:0.65rem;color:#94a3b8;border-top:1px solid rgba(15,23,42,0.08);padding-top:8px">${escapeHtml(data.footer || '')}${brandSettings.jewelerName ? ' · ' + escapeHtml(brandSettings.jewelerName) : ''}</div>
       </div>`;
     }
 
@@ -2267,8 +2799,12 @@ When analyzing uploaded documents:
       await loadExportLib('pptxgenjs');
       const pptx = new PptxGenJS();
       pptx.layout = 'LAYOUT_16x9';
-      pptx.author = 'DiaMatch AI';
+      pptx.author = brandSettings.jewelerName || 'DiaMatch AI';
       pptx.title = artifact.title;
+      const cover = pptx.addSlide();
+      cover.background = { color: '1E3A5F' };
+      cover.addText(brandSettings.jewelerName || artifact.title, { x: 0.5, y: 2.2, w: 9, h: 1, fontSize: 32, color: 'F5F0E8', fontFace: 'Georgia', bold: true, align: 'center' });
+      if (brandSettings.tagline) cover.addText(brandSettings.tagline, { x: 0.5, y: 3.2, w: 9, h: 0.5, fontSize: 14, color: 'B8956A', align: 'center' });
       const slides = artifact.data.slides || [];
       slides.forEach(s => {
         const slide = pptx.addSlide();
@@ -2290,7 +2826,7 @@ When analyzing uploaded documents:
       wrap.style.padding = '24px';
       wrap.style.fontFamily = 'Inter, sans-serif';
       wrap.style.fontSize = '12px';
-      wrap.innerHTML = typeof marked !== 'undefined' ? marked.parse(artifact.data.markdown || '') : escapeHtml(artifact.data.markdown || '');
+      wrap.innerHTML = getBrandHeaderHtml() + '<hr style="margin:16px 0;border:none;border-top:1px solid #e2e8f0"/>' + (typeof marked !== 'undefined' ? marked.parse(artifact.data.markdown || '') : escapeHtml(artifact.data.markdown || ''));
       await html2pdf().set({ margin: 10, filename: `${artifact.title.replace(/[^\w-]/g, '_')}.pdf` }).from(wrap).save();
       showToast('PDF downloaded');
     }
@@ -2440,6 +2976,8 @@ When analyzing uploaded documents:
       };
       addBtn('Open in Viewer', () => openArtifactInViewer(artifactId));
       addBtn('Save to Vault', () => saveArtifactToVault(artifactId));
+      if (artifact.lastPrompt) addBtn('Regenerate', () => sendMessage(artifact.lastPrompt, { ...artifact.lastOptions, studio: true }));
+      addBtn('Share link', () => encodeShareLink(artifactId));
       if (artifact.artifactType === 'slides') addBtn('Download PPTX', () => exportArtifact(artifactId, 'pptx'));
       if (artifact.artifactType === 'report') addBtn('Download PDF', () => exportArtifact(artifactId, 'pdf'));
       if (artifact.artifactType === 'table') {
@@ -2665,6 +3203,13 @@ When analyzing uploaded documents:
           copyBtn.addEventListener('click', () => copyToClipboard(text));
           div.appendChild(copyBtn);
         }
+        if (options.exportHtml) {
+          const htmlBtn = document.createElement('button');
+          htmlBtn.className = 'copy-btn';
+          htmlBtn.textContent = 'Download HTML email';
+          htmlBtn.addEventListener('click', () => exportPassportHtml(text));
+          div.appendChild(htmlBtn);
+        }
       }
       wrap.appendChild(div);
       chatMessages.appendChild(wrap);
@@ -2686,6 +3231,11 @@ When analyzing uploaded documents:
       loadingIndicator.classList.remove('hidden');
       if (options.studio) setLoadingLabel(mode);
 
+      if (options.studio) {
+        setLoadingLabel(mode);
+        showToast(estimateStudioTokens({ prompt: question }));
+      }
+
       try {
         const reply = await callGemini(question, options);
         if (reply) {
@@ -2699,9 +3249,21 @@ When analyzing uploaded documents:
             );
             const hasMdArtifact = options.outputType !== 'json' && parsed.data?.markdown;
             if (hasJsonArtifact || hasMdArtifact) {
-              const artifact = createArtifact(mode, parsed.data, parsed.data.title);
+              const artifact = createArtifact(mode, parsed.data, parsed.data.title || MODE_LABELS[mode], {
+                lastPrompt: question,
+                lastOptions: { mode, requireDocs: options.requireDocs, useSelected: options.useSelected, copyable: options.copyable, studio: true, outputType: options.outputType, tryVeo: options.tryVeo }
+              });
               artifactId = artifact.id;
               displayText = options.outputType === 'json' ? (parsed.markdown || summarizeArtifactData(parsed.data)) : reply;
+
+              if (mode === 'infographic') {
+                if (loadingLabel) loadingLabel.textContent = 'Generating hero image…';
+                const hero = await tryGenerateHeroImage(`Luxury ${parsed.data.title || 'diamond'} macro photography, dark velvet, brilliant cut`);
+                if (hero) {
+                  artifact.heroImageDataUrl = hero;
+                  displayText += '\n\n*Hero image added — open in Viewer.*';
+                }
+              }
 
               if (mode === 'video' && options.tryVeo) {
                 setLoadingLabel('video');
@@ -2724,6 +3286,7 @@ When analyzing uploaded documents:
           appendMessage('assistant', displayText, {
             modeLabel,
             copyable: options.copyable || mode === 'passport' || mode === 'marketing' || mode === 'whatsapp' || mode === 'insurance' || mode === 'rfq' || mode === 'pricememo',
+            exportHtml: options.exportHtml && mode === 'passport',
             artifactId
           });
           chatHistory.push({ role: 'user', text: question });
@@ -2758,14 +3321,36 @@ When analyzing uploaded documents:
         const studio = btn.dataset.studio === 'true';
         const outputType = btn.dataset.outputType || 'markdown';
         const tryVeo = btn.dataset.tryVeo === 'true';
+        const exportHtml = btn.dataset.exportHtml === 'true';
 
         if (useSelected && !selectedFilename) {
           showToast('Select a file or link in The Vault first', 'error');
           return;
         }
 
-        sendMessage(prompt, { mode, requireDocs, useSelected, copyable, studio, outputType, tryVeo });
+        sendMessage(prompt, { mode, requireDocs, useSelected, copyable, studio, outputType, tryVeo, exportHtml });
       });
+    });
+
+    document.getElementById('pairMatcherBtn')?.addEventListener('click', () => {
+      if (docOrder.length < 2) { showToast('Add at least 2 sources', 'error'); return; }
+      openPairMatcher();
+    });
+
+    document.getElementById('rapaportLookupBtn')?.addEventListener('click', () => {
+      if (!rapaportMatrix) { showToast('Upload a Rapaport CSV to The Vault first', 'error'); return; }
+      const doc = selectedFilename ? docTextStore[selectedFilename] : null;
+      const specs = doc?.parsedSpecs;
+      if (!specs?.carat) {
+        showToast('Select a certificate with parsed specs (OCR may be needed)', 'error');
+        return;
+      }
+      const row = lookupRapaport(specs.carat, specs.color, specs.clarity);
+      if (row) {
+        appendMessage('assistant', `**Rapaport lookup** for ${selectedFilename}\n\nCarat: ${specs.carat} | Color: ${specs.color} | Clarity: ${specs.clarity}\n\n\`\`\`json\n${JSON.stringify(row, null, 2)}\n\`\`\``, { modeLabel: 'Rapaport Lookup' });
+      } else {
+        showToast('No matching Rapaport row found', 'error');
+      }
     });
 
     // Keep negotiation mode active for follow-up chat replies
@@ -2783,10 +3368,53 @@ When analyzing uploaded documents:
     });
 
     // ─── Init ───────────────────────────────────────────────────────────────────
+    initDarkMode();
+    loadBrandSettings();
+    initCollapsibleToolSections();
     initSplitPanes();
-    renderVault();
-    renderViewer();
+    restoreVaultFromDb().then(() => {
+      renderVault();
+      renderViewer();
+    });
     updateStatusDot();
+    decodeShareLink();
+
+    document.getElementById('darkModeBtn')?.addEventListener('click', toggleDarkMode);
+    document.getElementById('settingsBtn')?.addEventListener('click', () => document.getElementById('settingsModal')?.classList.remove('hidden'));
+    document.getElementById('settingsCloseBtn')?.addEventListener('click', () => document.getElementById('settingsModal')?.classList.add('hidden'));
+    document.getElementById('settingsSaveBtn')?.addEventListener('click', saveBrandSettings);
+    document.getElementById('brandLogoInput')?.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        brandSettings.logoDataUrl = reader.result;
+        const prev = document.getElementById('brandLogoPreview');
+        const img = document.getElementById('brandLogoImg');
+        if (prev && img) { img.src = reader.result; prev.classList.remove('hidden'); }
+      };
+      reader.readAsDataURL(file);
+    });
+    document.getElementById('matcherCloseBtn')?.addEventListener('click', () => document.getElementById('matcherModal')?.classList.add('hidden'));
+    ['matcherStoneA', 'matcherStoneB', 'tolColor', 'tolTable', 'tolMm'].forEach(id => {
+      document.getElementById(id)?.addEventListener('input', () => {
+        if (id === 'tolColor') document.getElementById('tolColorVal').textContent = document.getElementById('tolColor').value;
+        if (id === 'tolTable') document.getElementById('tolTableVal').textContent = (document.getElementById('tolTable').value / 10).toFixed(1);
+        if (id === 'tolMm') document.getElementById('tolMmVal').textContent = (document.getElementById('tolMm').value / 100).toFixed(2);
+        runPairMatch();
+      });
+    });
+    document.getElementById('exportChatBtn')?.addEventListener('click', () => {
+      if (confirm('Export chat as Markdown? (Cancel for PDF)')) exportChatMarkdown();
+      else exportChatPdf();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && viewerMediaEl) {
+        viewerState.brightness = 100; viewerState.contrast = 100; viewerState.rotate = 0; viewerState.zoom = 1;
+        applyMediaTransform();
+      }
+    });
 
     if (!chatMessages.children.length) {
       appendMessage('assistant', `Welcome to **DiaMatch AI** — your diamond trade intelligence assistant.
@@ -2794,6 +3422,8 @@ When analyzing uploaded documents:
 Upload certificates, Rapaport sheets, photos, or paste links into **The Vault**. Select any source to preview it above, then ask questions in **The Chat Trader** below.
 
 Use **Studio** tools to generate slide decks, reports, data tables, infographics, and video kits — then open, save, or download them.
+
+**New:** Certificate OCR for scanned PDFs, vault persistence across refreshes, brand settings (⚙), pair matcher, Rapaport lookup, dark mode (🌙), and chat export.
 
 Drag the handles between panels to resize the layout — your preferences are saved automatically.`);
     }

@@ -1,0 +1,11 @@
+Shape,Color,Clarity,CaratMin,CaratMax,PricePerCarat
+Round,D,IF,0.50,0.69,12500
+Round,D,VVS1,0.50,0.69,10200
+Round,D,VVS2,0.50,0.69,9200
+Round,E,IF,0.50,0.69,11800
+Round,E,VVS1,0.50,0.69,9800
+Round,E,VVS2,0.50,0.69,8800
+Round,F,IF,0.70,0.89,10500
+Round,F,VVS1,0.70,0.89,8600
+Round,G,VS1,1.00,1.49,6200
+Round,H,VS2,1.00,1.49,5100
