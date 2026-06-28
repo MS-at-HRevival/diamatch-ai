@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DiaMatch AI — The Diamond Appraisal &amp; Layout Assistant</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
   <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -13,109 +13,174 @@
   </script>
   <style>
     :root {
-      --bg-obsidian: #0a0a0f;
-      --bg-charcoal: #1a1a24;
-      --text-platinum: #e8e8ec;
-      --text-muted: #8a8a9a;
-      --accent-diamond: #00b4ff;
-      --accent-diamond-light: #4dd2ff;
-      --status-live: #39ff14;
-      --accent-glow: 0 0 12px rgba(0, 180, 255, 0.45);
+      --bg-base: #f4f6f9;
+      --bg-surface: #ffffff;
+      --bg-muted: #eef2f6;
+      --bg-chat: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-soft: #dbeafe;
+      --accent-deep: #1d4ed8;
+      --gold: #b8956a;
+      --gold-soft: #f5f0e8;
+      --border: rgba(15, 23, 42, 0.08);
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 8px 30px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.1);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --status-live: #22c55e;
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     * { box-sizing: border-box; }
 
     body {
       font-family: 'Inter', system-ui, sans-serif;
-      background: var(--bg-obsidian);
-      color: var(--text-platinum);
+      background: linear-gradient(160deg, #f8fafc 0%, #eef2f7 45%, #f1f5f9 100%);
+      color: var(--text-primary);
       min-height: 100vh;
       overflow: hidden;
     }
 
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .brand-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+
+    .panel-main {
+      box-shadow: var(--shadow-md);
+      border-color: rgba(59, 130, 246, 0.12);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(0, 180, 255, 0.25);
-      border-radius: 3px;
+      background: rgba(148, 163, 184, 0.45);
+      border-radius: 99px;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 180, 255, 0.45);
+      background: rgba(100, 116, 139, 0.6);
     }
 
     .diamond-glow {
-      filter: drop-shadow(0 0 6px rgba(0, 180, 255, 0.6));
+      filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.25));
     }
 
     .status-dot {
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
-      background: #4a4a5a;
-      transition: all 0.3s ease;
+      background: #cbd5e1;
+      transition: all var(--transition);
       flex-shrink: 0;
     }
 
     .status-dot.live {
       background: var(--status-live);
-      box-shadow: 0 0 8px var(--status-live), 0 0 16px rgba(57, 255, 20, 0.4);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
     }
 
-    .status-dot.shake {
-      animation: shake 0.5s ease;
-    }
+    .status-dot.shake { animation: shake 0.5s ease; }
 
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-4px); }
-      75% { transform: translateX(4px); }
+      25% { transform: translateX(-3px); }
+      75% { transform: translateX(3px); }
+    }
+
+    .vault-item {
+      border-radius: var(--radius-sm);
+      transition: all var(--transition);
     }
 
     .vault-item.active {
-      border-left: 3px solid var(--accent-diamond);
-      background: rgba(0, 180, 255, 0.08);
+      border-left: 3px solid var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .vault-item:hover:not(.active) {
+      background: var(--bg-muted);
+    }
+
+    .upload-zone {
+      transition: all var(--transition);
     }
 
     .upload-zone.dragover {
-      border-color: var(--accent-diamond);
-      background: rgba(0, 180, 255, 0.06);
-      box-shadow: var(--accent-glow);
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      transform: scale(1.01);
     }
 
     .btn-diamond {
-      background: linear-gradient(135deg, var(--accent-diamond), #0088cc);
-      transition: all 0.2s ease;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+      color: #fff;
+      transition: all var(--transition);
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
     }
 
     .btn-diamond:hover:not(:disabled) {
-      box-shadow: var(--accent-glow);
       transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
     }
 
     .btn-diamond:disabled {
-      opacity: 0.4;
+      opacity: 0.45;
       cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-ghost {
+      background: var(--bg-muted);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      transition: all var(--transition);
+    }
+
+    .btn-ghost:hover {
+      background: #fff;
+      border-color: rgba(59, 130, 246, 0.25);
+      color: var(--accent-deep);
     }
 
     .citation-link {
-      color: var(--accent-diamond-light);
-      text-decoration: underline;
+      color: var(--accent-deep);
+      text-decoration: none;
+      font-weight: 500;
       cursor: pointer;
-      background: none;
+      background: var(--accent-soft);
       border: none;
-      padding: 0;
+      border-radius: 4px;
+      padding: 0 4px;
       font: inherit;
+      transition: all var(--transition);
     }
 
     .citation-link:hover {
+      background: var(--accent);
       color: #fff;
-      text-shadow: 0 0 8px rgba(0, 180, 255, 0.6);
+    }
+
+    .page-tab {
+      transition: all var(--transition);
     }
 
     .page-tab.active {
-      background: rgba(0, 180, 255, 0.2);
-      border-color: var(--accent-diamond);
-      color: var(--accent-diamond-light);
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent-deep);
     }
 
     .loading-dot {
@@ -123,204 +188,188 @@
     }
 
     @keyframes pulse-blue {
-      0%, 100% { opacity: 0.3; transform: scale(0.9); }
-      50% { opacity: 1; transform: scale(1.1); }
+      0%, 100% { opacity: 0.35; transform: scale(0.92); }
+      50% { opacity: 1; transform: scale(1.08); }
     }
 
     .toast {
-      animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+      animation: slideIn 0.35s ease, fadeOut 0.35s ease 2.7s forwards;
     }
 
     @keyframes slideIn {
-      from { transform: translateY(-12px); opacity: 0; }
+      from { transform: translateY(-10px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
 
     @keyframes fadeOut {
-      to { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 0; transform: translateY(-6px); }
     }
 
     .msg-user {
-      background: rgba(0, 180, 255, 0.15);
-      border: 1px solid rgba(0, 180, 255, 0.3);
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border: 1px solid rgba(59, 130, 246, 0.15);
+      border-radius: 14px 14px 4px 14px;
     }
 
     .msg-assistant {
-      background: var(--bg-charcoal);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--bg-muted);
+      border: 1px solid var(--border);
+      border-radius: 14px 14px 14px 4px;
     }
 
-    .chat-md {
-      line-height: 1.55;
-      word-break: break-word;
-    }
-
-    .chat-md p {
-      margin: 0 0 0.65em;
-    }
-
-    .chat-md p:last-child {
-      margin-bottom: 0;
-    }
-
+    .chat-md { line-height: 1.6; word-break: break-word; color: var(--text-primary); }
+    .chat-md p { margin: 0 0 0.65em; }
+    .chat-md p:last-child { margin-bottom: 0; }
     .chat-md h1, .chat-md h2, .chat-md h3, .chat-md h4 {
-      color: #f5f5f7;
+      color: var(--text-primary);
       font-weight: 600;
       margin: 0.85em 0 0.4em;
       line-height: 1.3;
     }
-
-    .chat-md h1 { font-size: 1.1em; }
+    .chat-md h1 { font-size: 1.15em; font-family: 'Cormorant Garamond', Georgia, serif; }
     .chat-md h2 { font-size: 1.05em; }
-    .chat-md h3, .chat-md h4 { font-size: 1em; color: var(--accent-diamond-light); }
-
-    .chat-md ul, .chat-md ol {
-      margin: 0.4em 0 0.65em;
-      padding-left: 1.25em;
-    }
-
-    .chat-md li {
-      margin-bottom: 0.25em;
-    }
-
-    .chat-md strong {
-      color: #fff;
-      font-weight: 600;
-    }
-
-    .chat-md em {
-      color: #c8c8d0;
-    }
-
+    .chat-md h3, .chat-md h4 { font-size: 1em; color: var(--accent-deep); }
+    .chat-md ul, .chat-md ol { margin: 0.4em 0 0.65em; padding-left: 1.25em; }
+    .chat-md li { margin-bottom: 0.3em; }
+    .chat-md strong { color: #0f172a; font-weight: 600; }
+    .chat-md em { color: var(--text-secondary); }
     .chat-md code {
-      background: rgba(0, 180, 255, 0.1);
-      border: 1px solid rgba(0, 180, 255, 0.2);
-      border-radius: 4px;
-      padding: 0.1em 0.35em;
-      font-size: 0.9em;
-      font-family: ui-monospace, monospace;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 0.1em 0.4em;
+      font-size: 0.88em;
     }
-
     .chat-md pre {
-      background: #0a0a0f;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 8px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
       padding: 0.75em;
       overflow-x: auto;
       margin: 0.5em 0;
     }
-
-    .chat-md pre code {
-      background: none;
-      border: none;
-      padding: 0;
-    }
-
+    .chat-md pre code { background: none; border: none; padding: 0; }
     .chat-md table {
       width: 100%;
       border-collapse: collapse;
       margin: 0.65em 0;
-      font-size: 0.85em;
+      font-size: 0.88em;
       display: block;
       overflow-x: auto;
+      background: #fff;
+      border-radius: var(--radius-sm);
     }
-
     .chat-md th, .chat-md td {
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 0.45em 0.55em;
+      border: 1px solid var(--border);
+      padding: 0.5em 0.6em;
       text-align: left;
-      vertical-align: top;
     }
-
     .chat-md th {
-      background: rgba(0, 180, 255, 0.12);
-      color: var(--accent-diamond-light);
+      background: var(--gold-soft);
+      color: #78350f;
       font-weight: 600;
     }
-
-    .chat-md tr:nth-child(even) td {
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .chat-md hr {
-      border: none;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      margin: 0.75em 0;
-    }
-
+    .chat-md tr:nth-child(even) td { background: #fafbfc; }
+    .chat-md hr { border: none; border-top: 1px solid var(--border); margin: 0.75em 0; }
     .chat-md blockquote {
-      border-left: 3px solid var(--accent-diamond);
+      border-left: 3px solid var(--gold);
       margin: 0.5em 0;
       padding: 0.25em 0 0.25em 0.75em;
-      color: #a8a8b8;
+      color: var(--text-secondary);
+      background: var(--gold-soft);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .chip, .feature-btn {
+      background: #fff;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      transition: all var(--transition);
     }
 
     .chip:hover, .feature-btn:hover {
-      border-color: var(--accent-diamond);
-      background: rgba(0, 180, 255, 0.1);
+      border-color: rgba(59, 130, 246, 0.35);
+      background: var(--accent-soft);
+      color: var(--accent-deep);
+      transform: translateY(-1px);
     }
 
-    .feature-btn.marketing { border-color: rgba(168, 85, 247, 0.35); }
-    .feature-btn.marketing:hover { background: rgba(168, 85, 247, 0.12); border-color: rgba(168, 85, 247, 0.6); }
-
-    .feature-btn.sales { border-color: rgba(251, 191, 36, 0.35); }
-    .feature-btn.sales:hover { background: rgba(251, 191, 36, 0.1); border-color: rgba(251, 191, 36, 0.6); }
+    .feature-btn.marketing:hover { background: #faf5ff; border-color: #c4b5fd; color: #6d28d9; }
+    .feature-btn.sales:hover { background: #fffbeb; border-color: #fcd34d; color: #b45309; }
 
     .tool-section-label {
       font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .panel-label {
+      font-size: 11px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #5a5a6a;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .panel-label-accent {
+      color: var(--accent-deep);
     }
 
     .msg-assistant .copy-btn {
-      display: block;
-      margin-top: 8px;
-      font-size: 10px;
-      color: var(--accent-diamond-light);
-      background: rgba(0, 180, 255, 0.1);
-      border: 1px solid rgba(0, 180, 255, 0.25);
-      border-radius: 6px;
-      padding: 4px 8px;
+      display: inline-flex;
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--accent-deep);
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 10px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all var(--transition);
     }
 
     .msg-assistant .copy-btn:hover {
-      background: rgba(0, 180, 255, 0.2);
-      box-shadow: var(--accent-glow);
+      background: var(--accent-soft);
+      border-color: rgba(59, 130, 246, 0.3);
     }
 
     .mode-badge {
       font-size: 9px;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: rgba(0, 180, 255, 0.15);
-      color: var(--accent-diamond-light);
-      margin-bottom: 6px;
+      padding: 3px 8px;
+      border-radius: 99px;
+      background: var(--gold-soft);
+      color: #92400e;
+      border: 1px solid rgba(184, 149, 106, 0.25);
+      margin-bottom: 8px;
       display: inline-block;
+      font-weight: 600;
     }
 
-    #viewerMedia img,
-    #viewerMedia video {
+    #viewerMedia img, #viewerMedia video {
       max-width: 100%;
-      max-height: calc(100vh - 220px);
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      max-height: calc(100vh - 240px);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
     }
 
-    #viewerMedia audio {
-      width: 100%;
-      margin-top: 12px;
-    }
+    #viewerMedia audio { width: 100%; margin-top: 12px; }
 
     #powerTools {
-      max-height: 140px;
-      overflow-y: auto;
+      max-height: none;
+      overflow-x: auto;
+      overflow-y: hidden;
+      flex-wrap: nowrap;
+      display: flex;
+      gap: 1rem;
+      padding-bottom: 4px;
     }
+
+    #powerTools > div { flex-shrink: 0; }
 
     .media-placeholder {
       color: var(--text-muted);
@@ -328,110 +377,135 @@
       text-align: center;
       padding: 2rem;
     }
+
+    .input-field {
+      background: #fff;
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      border-radius: var(--radius-sm);
+      transition: all var(--transition);
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: rgba(59, 130, 246, 0.45);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+    }
+
+    .input-field::placeholder { color: var(--text-muted); }
+
+    .chat-input-wrap {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 6px;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition);
+    }
+
+    .chat-input-wrap:focus-within {
+      border-color: rgba(59, 130, 246, 0.35);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .side-panel-collapsed { display: none !important; }
+
+    @media (max-width: 1023px) {
+      #viewerPanel { display: none; }
+      #viewerPanel.mobile-open {
+        display: flex !important;
+        position: fixed;
+        inset: 64px 12px 12px 12px;
+        z-index: 40;
+        box-shadow: var(--shadow-lg);
+      }
+      #vaultPanel.mobile-open {
+        display: flex !important;
+        position: fixed;
+        inset: 64px 12px 12px 12px;
+        z-index: 40;
+        max-width: 360px;
+        box-shadow: var(--shadow-lg);
+      }
+    }
   </style>
 </head>
 <body class="flex flex-col h-screen">
 
   <!-- Header -->
-  <header class="flex items-center justify-between px-4 md:px-6 py-3 border-b border-white/10 bg-[#12121a]/90 backdrop-blur-md flex-shrink-0 z-20">
+  <header class="flex items-center justify-between px-4 md:px-5 py-2.5 flex-shrink-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-200/80">
     <div class="flex items-center gap-3 min-w-0">
-      <svg class="w-8 h-8 flex-shrink-0 diamond-glow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2L4 9L12 22L20 9L12 2Z" stroke="#00b4ff" stroke-width="1.5" fill="rgba(0,180,255,0.15)"/>
-        <path d="M4 9H20M8 9L12 2L16 9M8 9L12 22L16 9" stroke="#4dd2ff" stroke-width="1" opacity="0.7"/>
+      <svg class="w-9 h-9 flex-shrink-0 diamond-glow" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2L4 9L12 22L20 9L12 2Z" stroke="#3b82f6" stroke-width="1.5" fill="rgba(59,130,246,0.08)"/>
+        <path d="M4 9H20M8 9L12 2L16 9M8 9L12 22L16 9" stroke="#60a5fa" stroke-width="1" opacity="0.8"/>
       </svg>
       <div class="min-w-0">
-        <h1 class="text-lg md:text-xl font-bold tracking-tight text-[#f5f5f7] truncate">DiaMatch AI</h1>
-        <p class="text-xs text-[#8a8a9a] hidden sm:block">Appraisal, Marketing &amp; Sales Intelligence</p>
+        <h1 class="brand-title text-xl md:text-2xl text-slate-800 truncate">DiaMatch AI</h1>
+        <p class="text-[11px] text-slate-500 hidden sm:block tracking-wide">Diamond Trade Intelligence</p>
       </div>
     </div>
-    <div class="flex items-center gap-2 md:gap-3 flex-shrink-0">
-      <label for="apiKeyInput" class="text-xs text-[#8a8a9a] hidden md:inline">Enter Gemini API Key</label>
-      <input
-        id="apiKeyInput"
-        type="password"
-        placeholder="Gemini API Key"
-        autocomplete="off"
-        class="w-36 sm:w-48 md:w-64 px-3 py-1.5 text-sm bg-[#1a1a24] border border-white/10 rounded-lg text-[#e8e8ec] placeholder-[#5a5a6a] focus:outline-none focus:border-[#00b4ff] focus:shadow-[0_0_12px_rgba(0,180,255,0.3)] transition-all"
-      />
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <button id="toggleVaultBtn" type="button" class="btn-ghost lg:hidden text-xs px-2.5 py-1.5 rounded-lg" title="Vault">Vault</button>
+      <button id="toggleViewerBtn" type="button" class="btn-ghost md:hidden text-xs px-2.5 py-1.5 rounded-lg" title="Viewer">Viewer</button>
+      <label for="apiKeyInput" class="text-xs text-slate-500 hidden md:inline">API Key</label>
+      <input id="apiKeyInput" type="password" placeholder="Gemini API Key" autocomplete="off"
+        class="input-field w-32 sm:w-44 md:w-52 px-3 py-1.5 text-sm" />
       <div id="statusDot" class="status-dot" title="API key status"></div>
     </div>
   </header>
 
-  <!-- Main layout -->
-  <main class="flex flex-1 overflow-hidden flex-col lg:flex-row">
+  <!-- Main layout: Vault | CHAT (hero) | Viewer -->
+  <main class="flex flex-1 overflow-hidden gap-3 p-3 min-h-0 flex-col lg:flex-row">
 
-    <!-- The Vault -->
-    <aside class="w-full lg:w-64 xl:w-72 flex-shrink-0 border-b lg:border-b-0 lg:border-r border-white/10 bg-[#12121a] flex flex-col max-h-48 lg:max-h-none">
-      <div class="px-4 py-3 border-b border-white/10">
-        <h2 class="text-xs font-semibold uppercase tracking-widest text-[#00b4ff]">The Vault</h2>
+    <!-- The Vault (sidebar) -->
+    <aside id="vaultPanel" class="panel w-full lg:w-56 xl:w-60 flex-shrink-0 flex flex-col min-h-0 hidden lg:flex">
+      <div class="px-3 py-2.5 border-b border-slate-100 flex-shrink-0">
+        <h2 class="panel-label panel-label-accent">The Vault</h2>
       </div>
-
-      <div
-        id="uploadZone"
-        class="upload-zone mx-3 mt-3 p-4 border-2 border-dashed border-white/15 rounded-xl text-center cursor-pointer transition-all hover:border-[#00b4ff]/50"
-      >
+      <div id="uploadZone" class="upload-zone mx-2.5 mt-2.5 p-3 border-2 border-dashed border-slate-200 rounded-xl text-center cursor-pointer bg-slate-50/50">
         <input id="fileInput" type="file" multiple class="hidden" />
-        <svg class="w-8 h-8 mx-auto mb-2 text-[#00b4ff]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-6 h-6 mx-auto mb-1.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
         </svg>
-        <p class="text-xs text-[#8a8a9a]">Certs, sheets, photos, videos &amp; more</p>
-        <p class="text-xs text-[#5a5a6a] mt-1">Files · links · max 15 sources</p>
+        <p class="text-[11px] text-slate-500 leading-snug">Upload certs, media &amp; sheets</p>
       </div>
-
-      <div class="mx-3 mt-2 mb-1 flex gap-1.5">
-        <input
-          id="linkInput"
-          type="url"
-          placeholder="Paste a link (PDF, image, video, webpage…)"
-          class="flex-1 min-w-0 px-2 py-1.5 text-xs bg-[#1a1a24] border border-white/10 rounded-lg text-[#e8e8ec] placeholder-[#5a5a6a] focus:outline-none focus:border-[#00b4ff] transition-all"
-        />
-        <button id="addLinkBtn" type="button" class="btn-diamond px-2.5 py-1.5 rounded-lg text-xs font-medium text-white flex-shrink-0" title="Add link">+</button>
+      <div class="mx-2.5 mt-2 flex gap-1">
+        <input id="linkInput" type="url" placeholder="Paste link…"
+          class="input-field flex-1 min-w-0 px-2 py-1.5 text-[11px]" />
+        <button id="addLinkBtn" type="button" class="btn-diamond px-2 py-1.5 rounded-lg text-xs font-medium" title="Add link">+</button>
       </div>
-
-      <div id="vaultList" class="flex-1 overflow-y-auto custom-scrollbar px-3 py-2 space-y-1">
-        <p id="vaultEmpty" class="text-xs text-[#5a5a6a] text-center py-4">No documents uploaded</p>
+      <div id="vaultList" class="flex-1 overflow-y-auto custom-scrollbar px-2.5 py-2 space-y-0.5 min-h-0">
+        <p id="vaultEmpty" class="text-[11px] text-slate-400 text-center py-6">No sources yet</p>
       </div>
     </aside>
 
-    <!-- Certificate Viewer -->
-    <section class="flex-1 flex flex-col min-w-0 border-b lg:border-b-0 lg:border-r border-white/10 bg-[#0a0a0f]">
-      <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between gap-2 flex-shrink-0">
-        <h2 class="text-xs font-semibold uppercase tracking-widest text-[#00b4ff]">Asset Viewer</h2>
-        <div id="viewerMeta" class="text-xs text-[#8a8a9a] truncate"></div>
-      </div>
-      <div id="pageTabs" class="px-4 py-2 flex gap-1 flex-wrap border-b border-white/5 hidden flex-shrink-0"></div>
-      <div id="viewerContent" class="flex-1 overflow-y-auto custom-scrollbar p-4">
-        <div id="viewerEmpty" class="flex flex-col items-center justify-center h-full text-center py-12">
-          <svg class="w-12 h-12 mb-4 text-[#00b4ff]/30 diamond-glow" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2L4 9L12 22L20 9L12 2Z" stroke="#00b4ff" stroke-width="1.5" fill="rgba(0,180,255,0.1)"/>
-          </svg>
-          <p class="text-sm text-[#8a8a9a]">Select a file or link from The Vault to inspect</p>
-        </div>
-        <div id="viewerMedia" class="hidden flex flex-col items-center justify-center"></div>
-        <pre id="viewerText" class="hidden text-sm text-[#e8e8ec] whitespace-pre-wrap font-mono leading-relaxed"></pre>
-      </div>
-    </section>
-
-    <!-- The Chat Trader -->
-    <aside class="w-full lg:w-80 xl:w-96 flex-shrink-0 flex flex-col bg-[#12121a] min-h-64 lg:min-h-0">
-      <div class="px-4 py-3 border-b border-white/10 flex-shrink-0">
-        <h2 class="text-xs font-semibold uppercase tracking-widest text-[#00b4ff]">The Chat Trader</h2>
-      </div>
-
-      <div id="powerTools" class="custom-scrollbar px-3 py-2 border-b border-white/5 flex-shrink-0 space-y-2">
-        <div>
-          <p class="tool-section-label mb-1">Trade &amp; Layout</p>
-          <div class="flex flex-wrap gap-1.5">
-            <button class="feature-btn chip text-xs px-2 py-1 rounded-full border border-white/10 text-[#8a8a9a] transition-all" data-mode="trade" data-require-docs="1" data-prompt="Find matching pairs for earrings from all uploaded certs. They must have identical color, clarity, and table percentages within a 0.05mm structural tolerance.">Match pairs</button>
-            <button class="feature-btn chip text-xs px-2 py-1 rounded-full border border-white/10 text-[#8a8a9a] transition-all" data-mode="trade" data-require-docs="1" data-prompt="Based on the attached Rapaport matrix, what is the maximum trade value for this stone given its fluorescence drawback?">Appraisal</button>
-            <button class="feature-btn chip text-xs px-2 py-1 rounded-full border border-white/10 text-[#8a8a9a] transition-all" data-mode="compare" data-require-docs="2" data-copyable="true" data-prompt="Generate a side-by-side Markdown comparison table of ALL uploaded certificates. Columns: one per stone (use filename as header). Rows: Carat, Shape, Color, Clarity, Cut, Depth%, Table%, Polish, Symmetry, Fluorescence, Measurements. Bold the best value in each row. Cite every [filename].">Compare table</button>
-            <button class="feature-btn chip text-xs px-2 py-1 rounded-full border border-white/10 text-[#8a8a9a] transition-all" data-mode="audit" data-require-docs="2" data-prompt="Run a full vault inventory audit on ALL uploaded certificates. Report shape/carat distribution, overstocked categories, missing trendy shapes (e.g. cushion, oval), and specific acquisition recommendations. Cite each [filename] with counts.">Blind spot audit</button>
+    <!-- The Chat Trader (MAIN) -->
+    <section id="chatPanel" class="panel panel-main flex-1 flex flex-col min-w-0 min-h-0 order-first lg:order-0">
+      <div class="px-4 py-3 border-b border-slate-100 flex-shrink-0 bg-gradient-to-r from-white to-blue-50/30 rounded-t-2xl">
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <div>
+            <h2 class="brand-title text-lg text-slate-800">The Chat Trader</h2>
+            <p class="text-[11px] text-slate-500">Your gemologist &amp; trade advisor</p>
+          </div>
+          <div id="loadingIndicator" class="hidden flex items-center gap-2 text-xs text-slate-500 bg-white px-3 py-1.5 rounded-full border border-slate-200">
+            <span class="loading-dot w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
+            Analyzing…
           </div>
         </div>
-        <div>
-          <p class="tool-section-label mb-1">Marketing</p>
-          <div class="flex flex-wrap gap-1.5">
-            <button class="feature-btn marketing chip text-xs px-2 py-1 rounded-full border text-[#8a8a9a] transition-all" data-mode="marketing" data-require-docs="1" data-copyable="true" data-use-selected="true" data-prompt="Act as a world-class luxury jewelry creative director. Using the certificate specs, produce exactly these three sections:
+        <div id="powerTools" class="custom-scrollbar space-y-0">
+          <div>
+            <p class="tool-section-label mb-1">Trade</p>
+            <div class="flex flex-wrap gap-1.5">
+              <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="trade" data-require-docs="1" data-prompt="Find matching pairs for earrings from all uploaded certs. They must have identical color, clarity, and table percentages within a 0.05mm structural tolerance.">Match pairs</button>
+              <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="trade" data-require-docs="1" data-prompt="Based on the attached Rapaport matrix, what is the maximum trade value for this stone given its fluorescence drawback?">Appraisal</button>
+              <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="compare" data-require-docs="2" data-copyable="true" data-prompt="Generate a side-by-side Markdown comparison table of ALL uploaded certificates. Columns: one per stone (use filename as header). Rows: Carat, Shape, Color, Clarity, Cut, Depth%, Table%, Polish, Symmetry, Fluorescence, Measurements. Bold the best value in each row. Cite every [filename].">Compare table</button>
+              <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="audit" data-require-docs="2" data-prompt="Run a full vault inventory audit on ALL uploaded certificates. Report shape/carat distribution, overstocked categories, missing trendy shapes (e.g. cushion, oval), and specific acquisition recommendations. Cite each [filename] with counts.">Blind spot audit</button>
+            </div>
+          </div>
+          <div>
+            <p class="tool-section-label mb-1">Marketing</p>
+            <div class="flex flex-wrap gap-1.5">
+              <button class="feature-btn marketing chip text-xs px-2.5 py-1 rounded-full" data-mode="marketing" data-require-docs="1" data-copyable="true" data-use-selected="true" data-prompt="Act as a world-class luxury jewelry creative director. Using the certificate specs, produce exactly these three sections:
 
 ## 30-Second Reel/TikTok Script
 Scene-by-scene filming instructions with specific lighting angles to minimize visible inclusions and maximize brilliance for the cut grade.
@@ -443,39 +517,52 @@ Two high-converting luxury captions with optimal hashtags.
 Three detailed prompts for Midjourney or DALL-E (macro photography, velvet/dark backgrounds, accurate carat/shape).
 
 Cite [filename] for every spec referenced.">Generate marketing</button>
-            <button class="feature-btn marketing chip text-xs px-2 py-1 rounded-full border text-[#8a8a9a] transition-all" data-mode="passport" data-require-docs="1" data-copyable="true" data-use-selected="true" data-prompt="Create a client-ready Diamond Passport — a romantic VIP email summary. Translate all technical jargon (VVS1, fluorescence, table %, etc.) into luxury consumer benefits. Structure: compelling opening hook, The Diamond Story (2-3 paragraphs), Key Benefits bullet list, elegant closing invitation. Ready to copy-paste into an email. Cite [filename].">Diamond passport</button>
+              <button class="feature-btn marketing chip text-xs px-2.5 py-1 rounded-full" data-mode="passport" data-require-docs="1" data-copyable="true" data-use-selected="true" data-prompt="Create a client-ready Diamond Passport — a romantic VIP email summary. Translate all technical jargon (VVS1, fluorescence, table %, etc.) into luxury consumer benefits. Structure: compelling opening hook, The Diamond Story (2-3 paragraphs), Key Benefits bullet list, elegant closing invitation. Ready to copy-paste into an email. Cite [filename].">Diamond passport</button>
+            </div>
           </div>
-        </div>
-        <div>
-          <p class="tool-section-label mb-1">Sales training</p>
-          <div class="flex flex-wrap gap-1.5">
-            <button class="feature-btn sales chip text-xs px-2 py-1 rounded-full border text-[#8a8a9a] transition-all" data-mode="negotiation" data-require-docs="1" data-use-selected="true" data-prompt="NEGOTIATION SIMULATOR START: You are now a skeptical, price-sensitive diamond buyer. Based on the certificate, identify this stone's weakest selling point and open with a realistic price objection (be tough but fair). Stay in buyer character. Cite [filename].">Negotiation sim</button>
-            <button class="feature-btn chip text-xs px-2 py-1 rounded-full border border-white/10 text-[#8a8a9a] transition-all" data-mode="trade" data-prompt="What does medium fluorescence do to diamond trade value?">Fluorescence Q&amp;A</button>
+          <div>
+            <p class="tool-section-label mb-1">Sales</p>
+            <div class="flex flex-wrap gap-1.5">
+              <button class="feature-btn sales chip text-xs px-2.5 py-1 rounded-full" data-mode="negotiation" data-require-docs="1" data-use-selected="true" data-prompt="NEGOTIATION SIMULATOR START: You are now a skeptical, price-sensitive diamond buyer. Based on the certificate, identify this stone's weakest selling point and open with a realistic price objection (be tough but fair). Stay in buyer character. Cite [filename].">Negotiation sim</button>
+              <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="trade" data-prompt="What does medium fluorescence do to diamond trade value?">Fluorescence Q&amp;A</button>
+            </div>
           </div>
         </div>
       </div>
 
-      <div id="chatMessages" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-3">
-        <div class="msg-assistant rounded-xl px-3 py-2 text-sm text-[#c8c8d0]">
+      <div id="chatMessages" class="flex-1 overflow-y-auto custom-scrollbar px-4 py-4 space-y-4 min-h-0 bg-slate-50/40">
+        <div class="msg-assistant rounded-2xl px-4 py-3 text-sm max-w-[90%]">
           <div class="chat-md">
-            <p>Welcome to DiaMatch AI. Upload files or paste links into The Vault, then use Power Tools for layout matching, marketing assets, client passports, negotiation training, and inventory audits.</p>
+            <p>Welcome to <strong>DiaMatch AI</strong>. Add sources to The Vault, then ask about layout matching, appraisals, marketing, or gemology — your trade desk is ready.</p>
           </div>
         </div>
       </div>
 
-      <div id="loadingIndicator" class="hidden px-4 py-2 flex items-center gap-2 text-xs text-[#8a8a9a]">
-        <span class="loading-dot w-2 h-2 rounded-full bg-[#00b4ff] inline-block"></span>
-        Analyzing with Gemini…
+      <div class="p-4 border-t border-slate-100 flex-shrink-0 bg-white rounded-b-2xl">
+        <div class="chat-input-wrap flex gap-2 items-center">
+          <input id="chatInput" type="text" placeholder="Ask your gemologist anything…"
+            class="flex-1 px-3 py-2.5 text-sm bg-transparent border-none focus:outline-none text-slate-800 placeholder-slate-400" />
+          <button id="sendBtn" class="btn-diamond px-5 py-2.5 rounded-xl text-sm font-medium flex-shrink-0">Send</button>
+        </div>
       </div>
+    </section>
 
-      <div class="p-3 border-t border-white/10 flex gap-2 flex-shrink-0">
-        <input
-          id="chatInput"
-          type="text"
-          placeholder="Ask about layout, appraisal, or gemology…"
-          class="flex-1 px-3 py-2 text-sm bg-[#1a1a24] border border-white/10 rounded-lg text-[#e8e8ec] placeholder-[#5a5a6a] focus:outline-none focus:border-[#00b4ff] transition-all"
-        />
-        <button id="sendBtn" class="btn-diamond px-4 py-2 rounded-lg text-sm font-medium text-white">Send</button>
+    <!-- Asset Viewer (sidebar) -->
+    <aside id="viewerPanel" class="panel w-full md:w-64 xl:w-72 flex-shrink-0 flex flex-col min-h-0 hidden md:flex">
+      <div class="px-3 py-2.5 border-b border-slate-100 flex items-center justify-between gap-2 flex-shrink-0">
+        <h2 class="panel-label">Asset Viewer</h2>
+        <div id="viewerMeta" class="text-[10px] text-slate-400 truncate max-w-[120px]"></div>
+      </div>
+      <div id="pageTabs" class="px-3 py-1.5 flex gap-1 flex-wrap border-b border-slate-50 hidden flex-shrink-0"></div>
+      <div id="viewerContent" class="flex-1 overflow-y-auto custom-scrollbar p-3 min-h-0 bg-slate-50/30">
+        <div id="viewerEmpty" class="flex flex-col items-center justify-center h-full text-center py-10">
+          <svg class="w-10 h-10 mb-3 text-blue-200" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L4 9L12 22L20 9L12 2Z" stroke="#93c5fd" stroke-width="1.5" fill="rgba(147,197,253,0.15)"/>
+          </svg>
+          <p class="text-xs text-slate-400 leading-relaxed px-4">Select a source<br/>to preview</p>
+        </div>
+        <div id="viewerMedia" class="hidden flex flex-col items-center justify-center"></div>
+        <pre id="viewerText" class="hidden text-xs text-slate-600 whitespace-pre-wrap font-mono leading-relaxed bg-white p-3 rounded-xl border border-slate-100"></pre>
       </div>
     </aside>
   </main>
@@ -610,8 +697,8 @@ When analyzing uploaded documents:
     function showToast(message, type = 'info') {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
-      const borderColor = type === 'error' ? 'border-red-500/50' : 'border-[#00b4ff]/50';
-      toast.className = `toast pointer-events-auto px-4 py-2 rounded-lg bg-[#1a1a24] border ${borderColor} text-sm text-[#e8e8ec] shadow-lg max-w-xs`;
+      const borderColor = type === 'error' ? 'border-red-200' : 'border-blue-200';
+      toast.className = `toast pointer-events-auto px-4 py-2.5 rounded-xl bg-white border ${borderColor} text-sm text-slate-700 shadow-lg max-w-xs`;
       toast.textContent = message;
       container.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
@@ -1004,8 +1091,8 @@ When analyzing uploaded documents:
 
         item.innerHTML = `
           <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${badgeClass} flex-shrink-0">${doc.badge}</span>
-          <span class="text-xs text-[#e8e8ec] truncate flex-1" title="${filename}">${filename}</span>
-          <button class="remove-btn text-[#5a5a6a] hover:text-red-400 flex-shrink-0 text-sm leading-none px-1" title="Remove">&times;</button>
+          <span class="text-[11px] text-slate-700 truncate flex-1" title="${filename}">${filename}</span>
+          <button class="remove-btn text-slate-300 hover:text-red-400 flex-shrink-0 text-sm leading-none px-1" title="Remove">&times;</button>
         `;
 
         item.addEventListener('click', (e) => {
@@ -1058,27 +1145,27 @@ When analyzing uploaded documents:
 
         if (mime.startsWith('image/')) {
           wrap.innerHTML = `
-            <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="text-xs text-[#00b4ff] hover:underline break-all mb-3 block">${doc.url}</a>
+            <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-600 hover:underline break-all mb-3 block">${doc.url}</a>
             <img src="${safeUrl}" alt="Linked image" class="max-w-full rounded-xl border border-white/10" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
             <p class="media-placeholder hidden">Image preview blocked — open link below. Gemini can still analyze the URL.</p>
           `;
         } else if (mime === 'application/pdf') {
           wrap.innerHTML = `
-            <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="text-xs text-[#00b4ff] hover:underline break-all mb-3 block">${doc.url}</a>
+            <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-600 hover:underline break-all mb-3 block">${doc.url}</a>
             <iframe src="${safeUrl}" class="w-full h-[65vh] rounded-xl border border-white/10 bg-white/5" title="PDF preview"></iframe>
           `;
         } else if (mime.startsWith('video/')) {
           wrap.innerHTML = `
-            <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="text-xs text-[#00b4ff] hover:underline break-all mb-3 block">${doc.url}</a>
+            <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-600 hover:underline break-all mb-3 block">${doc.url}</a>
             <video src="${safeUrl}" controls playsinline class="w-full rounded-xl border border-white/10"></video>
           `;
         } else {
           wrap.innerHTML = `
             <div class="text-center py-8 px-4 rounded-xl border border-white/10 bg-[#1a1a24]">
-              <svg class="w-10 h-10 mx-auto mb-3 text-[#00b4ff]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-              <p class="text-sm text-[#8a8a9a] mb-3">Web link source</p>
-              <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="text-sm text-[#00b4ff] hover:underline break-all">${doc.url}</a>
-              <p class="text-xs text-[#5a5a6a] mt-4">Gemini fetches this URL server-side for analysis in chat.</p>
+              <svg class="w-10 h-10 mx-auto mb-3 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+              <p class="text-sm text-slate-500 mb-3">Web link source</p>
+              <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 hover:underline break-all">${doc.url}</a>
+              <p class="text-xs text-slate-400 mt-4">Gemini fetches this URL server-side for analysis in chat.</p>
             </div>
           `;
         }
@@ -1101,7 +1188,7 @@ When analyzing uploaded documents:
         viewerMedia.classList.remove('hidden');
         const wrap = document.createElement('div');
         wrap.className = 'w-full max-w-lg text-center';
-        wrap.innerHTML = `<p class="text-sm text-[#8a8a9a] mb-4">${selectedFilename}</p>`;
+        wrap.innerHTML = `<p class="text-sm text-slate-500 mb-4">${selectedFilename}</p>`;
         const audio = document.createElement('audio');
         audio.src = doc.dataUrl;
         audio.controls = true;
@@ -1113,7 +1200,7 @@ When analyzing uploaded documents:
         pageTabs.classList.remove('hidden');
         doc.pages.forEach(pg => {
           const tab = document.createElement('button');
-          tab.className = `page-tab text-xs px-2 py-1 rounded border border-white/10 text-[#8a8a9a] transition-all ${pg.pageNum === selectedPage ? 'active' : ''}`;
+          tab.className = `page-tab text-xs px-2 py-1 rounded border border-slate-200 text-slate-500 transition-all ${pg.pageNum === selectedPage ? 'active' : ''}`;
           tab.textContent = `Page ${pg.pageNum}`;
           tab.addEventListener('click', () => {
             selectedPage = pg.pageNum;
@@ -1357,8 +1444,11 @@ When analyzing uploaded documents:
     }
 
     function appendMessage(role, text, options = {}) {
+      const wrap = document.createElement('div');
+      wrap.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'}`;
+
       const div = document.createElement('div');
-      div.className = `rounded-xl px-3 py-2 text-sm ${role === 'user' ? 'msg-user ml-6' : 'msg-assistant mr-2'} text-[#e8e8ec]`;
+      div.className = `rounded-2xl px-4 py-3 text-sm max-w-[88%] sm:max-w-[85%] ${role === 'user' ? 'msg-user text-slate-800' : 'msg-assistant text-slate-700'}`;
 
       if (role === 'user') {
         if (options.modeLabel) {
@@ -1392,7 +1482,8 @@ When analyzing uploaded documents:
           div.appendChild(copyBtn);
         }
       }
-      chatMessages.appendChild(div);
+      wrap.appendChild(div);
+      chatMessages.appendChild(wrap);
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
@@ -1466,6 +1557,15 @@ When analyzing uploaded documents:
     });
 
     // ─── Init ───────────────────────────────────────────────────────────────────
+    document.getElementById('toggleVaultBtn')?.addEventListener('click', () => {
+      document.getElementById('vaultPanel').classList.toggle('mobile-open');
+      document.getElementById('viewerPanel').classList.remove('mobile-open');
+    });
+    document.getElementById('toggleViewerBtn')?.addEventListener('click', () => {
+      document.getElementById('viewerPanel').classList.toggle('mobile-open');
+      document.getElementById('vaultPanel').classList.remove('mobile-open');
+    });
+
     renderVault();
     renderViewer();
     updateStatusDot();
