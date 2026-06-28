@@ -1,0 +1,13 @@
+{
+  "name": "diamatch-ai",
+  "version": "1.0.0",
+  "description": "B2B diamond appraisal, layout matching, and trade intelligence powered by Gemini.",
+  "private": true,
+  "scripts": {
+    "build": "echo 'Static site - no build step required'",
+    "dev": "echo 'Use a local dev server to preview'"
+  },
+  "dependencies": {
+    "@vercel/speed-insights": "^1.1.0"
+  }
+}
