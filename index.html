@@ -296,6 +296,129 @@
 
     .feature-btn.marketing:hover { background: #faf5ff; border-color: #c4b5fd; color: #6d28d9; }
     .feature-btn.sales:hover { background: #fffbeb; border-color: #fcd34d; color: #b45309; }
+    .feature-btn.studio:hover { background: #ecfdf5; border-color: #6ee7b7; color: #047857; }
+
+    .msg-assistant .artifact-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .msg-assistant .artifact-actions button {
+      font-size: 11px;
+      color: var(--accent-deep);
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .msg-assistant .artifact-actions button:hover {
+      background: var(--accent-soft);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    #viewerArtifact {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+    }
+
+    .slide-carousel {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 280px;
+    }
+
+    .slide-carousel-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      text-align: center;
+      min-height: 200px;
+    }
+
+    .slide-carousel-main h3 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #f5f0e8;
+    }
+
+    .slide-carousel-main ul {
+      text-align: left;
+      display: inline-block;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+    }
+
+    .slide-carousel-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .artifact-table-wrap {
+      overflow: auto;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .artifact-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+    }
+
+    .artifact-table th {
+      background: var(--accent-soft);
+      color: var(--accent-deep);
+      padding: 6px 8px;
+      text-align: left;
+      cursor: pointer;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .artifact-table td {
+      padding: 5px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .artifact-table tr.highlight td {
+      background: #fffbeb;
+      font-weight: 600;
+    }
+
+    .infographic-preview {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .video-kit-scene {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      background: #fff;
+      font-size: 0.75rem;
+    }
+
+    .video-kit-scene strong { color: var(--accent-deep); }
 
     .tool-section-label {
       font-size: 10px;
@@ -350,14 +473,176 @@
     }
 
     #viewerMedia img, #viewerMedia video {
-      max-width: 100%;
-      max-height: calc(100vh - 240px);
+      max-width: none;
+      max-height: none;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border);
       box-shadow: var(--shadow-sm);
+      transform-origin: center center;
+      transition: filter 0.2s ease;
     }
 
     #viewerMedia audio { width: 100%; margin-top: 12px; }
+
+    #viewerMediaWrap {
+      overflow: auto;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: repeating-conic-gradient(#f1f5f9 0% 25%, #fff 0% 50%) 50% / 16px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    #viewerToolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--border);
+      background: #fafbfc;
+      flex-shrink: 0;
+    }
+
+    .viewer-tool-group {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding-right: 6px;
+      margin-right: 4px;
+      border-right: 1px solid var(--border);
+    }
+
+    .viewer-tool-group:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+
+    .viewer-tool-btn {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .viewer-tool-btn:hover {
+      background: var(--accent-soft);
+      border-color: rgba(59, 130, 246, 0.3);
+      color: var(--accent-deep);
+    }
+
+    .viewer-tool-btn.active {
+      background: var(--accent-soft);
+      color: var(--accent-deep);
+      font-weight: 600;
+    }
+
+    #workspace {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      flex: 1;
+      padding: 10px;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    #topPane {
+      display: flex;
+      flex-direction: row;
+      min-height: 120px;
+      overflow: hidden;
+      gap: 0;
+    }
+
+    #vaultPanel {
+      min-width: 160px;
+      max-width: 55%;
+    }
+
+    #viewerPanel {
+      min-width: 200px;
+      flex: 1;
+    }
+
+    #chatPanel {
+      min-height: 160px;
+    }
+
+    .resize-handle {
+      flex-shrink: 0;
+      background: var(--bg-muted);
+      transition: background var(--transition);
+      z-index: 10;
+      position: relative;
+    }
+
+    .resize-handle:hover, .resize-handle.dragging {
+      background: var(--accent-soft);
+    }
+
+    .resize-handle-h {
+      height: 8px;
+      cursor: row-resize;
+      border-radius: 4px;
+      margin: 4px 0;
+    }
+
+    .resize-handle-h::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 3px;
+      border-radius: 2px;
+      background: #cbd5e1;
+    }
+
+    .resize-handle-v {
+      width: 8px;
+      cursor: col-resize;
+      border-radius: 4px;
+      margin: 0 2px;
+    }
+
+    .resize-handle-v::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 3px;
+      height: 40px;
+      border-radius: 2px;
+      background: #cbd5e1;
+    }
+
+    body.resizing { cursor: row-resize; user-select: none; }
+    body.resizing-col { cursor: col-resize; user-select: none; }
+
+    #viewerPdfFrame {
+      width: 100%;
+      height: 100%;
+      min-height: 280px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: #fff;
+    }
+
+    #viewerLinkFrame {
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #fff;
+    }
 
     #powerTools {
       max-height: none;
@@ -409,25 +694,6 @@
     }
 
     .side-panel-collapsed { display: none !important; }
-
-    @media (max-width: 1023px) {
-      #viewerPanel { display: none; }
-      #viewerPanel.mobile-open {
-        display: flex !important;
-        position: fixed;
-        inset: 64px 12px 12px 12px;
-        z-index: 40;
-        box-shadow: var(--shadow-lg);
-      }
-      #vaultPanel.mobile-open {
-        display: flex !important;
-        position: fixed;
-        inset: 64px 12px 12px 12px;
-        z-index: 40;
-        max-width: 360px;
-        box-shadow: var(--shadow-lg);
-      }
-    }
   </style>
 </head>
 <body class="flex flex-col h-screen">
@@ -445,8 +711,6 @@
       </div>
     </div>
     <div class="flex items-center gap-2 flex-shrink-0">
-      <button id="toggleVaultBtn" type="button" class="btn-ghost lg:hidden text-xs px-2.5 py-1.5 rounded-lg" title="Vault">Vault</button>
-      <button id="toggleViewerBtn" type="button" class="btn-ghost md:hidden text-xs px-2.5 py-1.5 rounded-lg" title="Viewer">Viewer</button>
       <label for="apiKeyInput" class="text-xs text-slate-500 hidden md:inline">API Key</label>
       <input id="apiKeyInput" type="password" placeholder="Gemini API Key" autocomplete="off"
         class="input-field w-32 sm:w-44 md:w-52 px-3 py-1.5 text-sm" />
@@ -454,45 +718,71 @@
     </div>
   </header>
 
-  <!-- Main layout: Vault | CHAT (hero) | Viewer -->
-  <main class="flex flex-1 overflow-hidden gap-3 p-3 min-h-0 flex-col lg:flex-row">
+  <!-- Resizable workspace: top = vault + viewer | bottom = chat -->
+  <main id="workspace">
 
-    <!-- The Vault (sidebar) -->
-    <aside id="vaultPanel" class="panel w-full lg:w-56 xl:w-60 flex-shrink-0 flex flex-col min-h-0 hidden lg:flex">
-      <div class="px-3 py-2.5 border-b border-slate-100 flex-shrink-0">
-        <h2 class="panel-label panel-label-accent">The Vault</h2>
-      </div>
-      <div id="uploadZone" class="upload-zone mx-2.5 mt-2.5 p-3 border-2 border-dashed border-slate-200 rounded-xl text-center cursor-pointer bg-slate-50/50">
-        <input id="fileInput" type="file" multiple class="hidden" />
-        <svg class="w-6 h-6 mx-auto mb-1.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-        </svg>
-        <p class="text-[11px] text-slate-500 leading-snug">Upload certs, media &amp; sheets</p>
-      </div>
-      <div class="mx-2.5 mt-2 flex gap-1">
-        <input id="linkInput" type="url" placeholder="Paste link…"
-          class="input-field flex-1 min-w-0 px-2 py-1.5 text-[11px]" />
-        <button id="addLinkBtn" type="button" class="btn-diamond px-2 py-1.5 rounded-lg text-xs font-medium" title="Add link">+</button>
-      </div>
-      <div id="vaultList" class="flex-1 overflow-y-auto custom-scrollbar px-2.5 py-2 space-y-0.5 min-h-0">
-        <p id="vaultEmpty" class="text-[11px] text-slate-400 text-center py-6">No sources yet</p>
-      </div>
-    </aside>
+    <!-- Top half: Asset list (25%) + Asset viewer (75%) -->
+    <div id="topPane" class="panel overflow-hidden" style="flex: 0 0 50%;">
+      <aside id="vaultPanel" class="flex flex-col min-h-0 border-r border-slate-100" style="flex: 0 0 25%;">
+        <div class="px-3 py-2 border-b border-slate-100 flex-shrink-0">
+          <h2 class="panel-label panel-label-accent">The Vault</h2>
+        </div>
+        <div id="uploadZone" class="upload-zone mx-2 mt-2 p-2.5 border-2 border-dashed border-slate-200 rounded-xl text-center cursor-pointer bg-slate-50/50 flex-shrink-0">
+          <input id="fileInput" type="file" multiple class="hidden" />
+          <p class="text-[11px] text-slate-500">Upload or drop files</p>
+        </div>
+        <div class="mx-2 mt-1.5 flex gap-1 flex-shrink-0">
+          <input id="linkInput" type="url" placeholder="Paste link…" class="input-field flex-1 min-w-0 px-2 py-1.5 text-[11px]" />
+          <button id="addLinkBtn" type="button" class="btn-diamond px-2 py-1.5 rounded-lg text-xs font-medium">+</button>
+        </div>
+        <div id="vaultList" class="flex-1 overflow-y-auto custom-scrollbar px-2 py-1.5 space-y-0.5 min-h-0">
+          <p id="vaultEmpty" class="text-[11px] text-slate-400 text-center py-4">No sources yet</p>
+        </div>
+      </aside>
 
-    <!-- The Chat Trader (MAIN) -->
-    <section id="chatPanel" class="panel panel-main flex-1 flex flex-col min-w-0 min-h-0 order-first lg:order-0">
-      <div class="px-4 py-3 border-b border-slate-100 flex-shrink-0 bg-gradient-to-r from-white to-blue-50/30 rounded-t-2xl">
-        <div class="flex items-center justify-between gap-2 mb-2">
+      <div id="handleVaultViewer" class="resize-handle resize-handle-v" title="Drag to resize vault / viewer"></div>
+
+      <section id="viewerPanel" class="flex flex-col min-h-0 min-w-0" style="flex: 1;">
+        <div class="px-3 py-2 border-b border-slate-100 flex items-center justify-between gap-2 flex-shrink-0 bg-white">
+          <h2 class="panel-label">Asset Viewer</h2>
+          <div id="viewerMeta" class="text-[10px] text-slate-400 truncate"></div>
+        </div>
+        <div id="viewerToolbar" class="hidden"></div>
+        <div id="pageTabs" class="px-3 py-1.5 flex gap-1 flex-wrap border-b border-slate-50 hidden flex-shrink-0 bg-white"></div>
+        <div id="viewerContent" class="flex-1 flex flex-col min-h-0 overflow-hidden p-2 bg-slate-50/40">
+          <div id="viewerEmpty" class="flex flex-col items-center justify-center flex-1 text-center py-8">
+            <svg class="w-10 h-10 mb-2 text-blue-200" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L4 9L12 22L20 9L12 2Z" stroke="#93c5fd" stroke-width="1.5"/>
+            </svg>
+            <p class="text-xs text-slate-400">Select a source to preview</p>
+          </div>
+          <div id="viewerMediaWrap" class="hidden flex-1 min-h-0">
+            <div id="viewerMedia" class="flex items-center justify-center p-2"></div>
+          </div>
+          <pre id="viewerText" class="hidden flex-1 overflow-y-auto custom-scrollbar text-xs text-slate-600 whitespace-pre-wrap font-mono leading-relaxed bg-white p-3 rounded-xl border border-slate-100 min-h-0"></pre>
+          <div id="viewerArtifact" class="hidden flex-1 min-h-0 overflow-auto custom-scrollbar"></div>
+          <iframe id="viewerPdfFrame" class="hidden flex-1 min-h-0" title="PDF preview"></iframe>
+          <iframe id="viewerLinkFrame" class="hidden flex-1 min-h-0" title="Web preview" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+      </section>
+    </div>
+
+    <div id="handleTopChat" class="resize-handle resize-handle-h" title="Drag to resize workspace / chat"></div>
+
+    <!-- Bottom half: Chat -->
+    <section id="chatPanel" class="panel panel-main flex flex-col min-h-0 overflow-hidden" style="flex: 1;">
+      <div class="px-4 py-2.5 border-b border-slate-100 flex-shrink-0 bg-gradient-to-r from-white to-blue-50/30">
+        <div class="flex items-center justify-between gap-2 mb-1.5">
           <div>
             <h2 class="brand-title text-lg text-slate-800">The Chat Trader</h2>
             <p class="text-[11px] text-slate-500">Your gemologist &amp; trade advisor</p>
           </div>
           <div id="loadingIndicator" class="hidden flex items-center gap-2 text-xs text-slate-500 bg-white px-3 py-1.5 rounded-full border border-slate-200">
             <span class="loading-dot w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
-            Analyzing…
+            <span id="loadingLabel">Analyzing…</span>
           </div>
         </div>
-        <div id="powerTools" class="custom-scrollbar space-y-0">
+        <div id="powerTools" class="custom-scrollbar">
           <div>
             <p class="tool-section-label mb-1">Trade</p>
             <div class="flex flex-wrap gap-1.5">
@@ -527,18 +817,29 @@ Cite [filename] for every spec referenced.">Generate marketing</button>
               <button class="feature-btn chip text-xs px-2.5 py-1 rounded-full" data-mode="trade" data-prompt="What does medium fluorescence do to diamond trade value?">Fluorescence Q&amp;A</button>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div id="chatMessages" class="flex-1 overflow-y-auto custom-scrollbar px-4 py-4 space-y-4 min-h-0 bg-slate-50/40">
-        <div class="msg-assistant rounded-2xl px-4 py-3 text-sm max-w-[90%]">
-          <div class="chat-md">
-            <p>Welcome to <strong>DiaMatch AI</strong>. Add sources to The Vault, then ask about layout matching, appraisals, marketing, or gemology — your trade desk is ready.</p>
+          <div>
+            <p class="tool-section-label mb-1">Studio</p>
+            <div class="flex flex-wrap gap-1.5">
+              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="slides" data-output-type="json" data-require-docs="1" data-use-selected="true" data-prompt="Create a luxury diamond trade presentation slide deck from the uploaded certificate(s). Return ONLY valid JSON matching this schema: {&quot;title&quot;: string, &quot;theme&quot;: string, &quot;slides&quot;: [{&quot;title&quot;: string, &quot;bullets&quot;: string[], &quot;speakerNotes&quot;: string, &quot;visualHint&quot;: string}]}. Include 8-12 slides: cover, stone overview, 4Cs breakdown, proportions, trade positioning, Rapaport context if available, marketing angle, closing CTA. Cite [filename] in speakerNotes.">Slide deck</button>
+              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="report" data-output-type="markdown" data-require-docs="1" data-copyable="true" data-prompt="Generate a formal trade appraisal dossier report. Structure: # Cover title, ## Executive Summary, ## Stone Specifications (table), ## Rapaport &amp; Trade Valuation, ## Risk Factors, ## Recommendations, ## Citations. Professional B2B tone. Cite every [filename].">Trade report</button>
+              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="datatable" data-output-type="json" data-require-docs="1" data-prompt="Normalize ALL uploaded certificates into a machine-readable data table. Return ONLY valid JSON: {&quot;title&quot;: string, &quot;columns&quot;: string[], &quot;rows&quot;: string[][], &quot;rowHighlights&quot;: number[]}. Columns: Filename, Carat, Shape, Color, Clarity, Cut, Depth%, Table%, Polish, Symmetry, Fluorescence, Measurements. One row per stone. Highlight best value per metric in rowHighlights (row indices).">Data table</button>
+              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="infographic" data-output-type="json" data-require-docs="1" data-use-selected="true" data-prompt="Design a luxury diamond infographic layout. Return ONLY valid JSON: {&quot;title&quot;: string, &quot;subtitle&quot;: string, &quot;stats&quot;: [{&quot;label&quot;: string, &quot;value&quot;: string, &quot;accent&quot;: boolean}], &quot;callouts&quot;: string[], &quot;citations&quot;: string[], &quot;footer&quot;: string}. 4-6 stat blocks from cert data. Cite [filename].">Infographic</button>
+              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="video" data-output-type="json" data-require-docs="1" data-use-selected="true" data-try-veo="true" data-prompt="Create a complete 30-60 second luxury diamond video production kit. Return ONLY valid JSON: {&quot;title&quot;: string, &quot;script&quot;: string, &quot;scenes&quot;: [{&quot;sceneNum&quot;: number, &quot;duration&quot;: string, &quot;shot&quot;: string, &quot;lighting&quot;: string, &quot;onScreenText&quot;: string, &quot;audio&quot;: string}], &quot;srt&quot;: string, &quot;hashtags&quot;: string[], &quot;thumbnailPrompts&quot;: string[]}. Base on certificate specs. Cite [filename].">Video kit</button>
+              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="insurance" data-output-type="markdown" data-require-docs="1" data-use-selected="true" data-copyable="true" data-prompt="Write a formal insurance appraisal letter suitable for insurers. Include: date line, insured item description, replacement value methodology, detailed spec table, gemologist statement, limitations clause. Cite [filename].">Insurance letter</button>
+              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="rfq" data-output-type="markdown" data-require-docs="1" data-use-selected="true" data-copyable="true" data-prompt="Draft a professional B2B RFQ/supplier inquiry email requesting stones matching the uploaded certificate specs. Include subject line, greeting, spec requirements table, quantity, timeline, and closing. Cite [filename].">RFQ email</button>
+              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="whatsapp" data-output-type="markdown" data-require-docs="1" data-use-selected="true" data-copyable="true" data-prompt="Write a 2-3 sentence WhatsApp broker listing blurb for this stone. Trade-professional tone, include key specs and call-to-action. Cite [filename].">WhatsApp blurb</button>
+              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="pricememo" data-output-type="markdown" data-require-docs="1" data-use-selected="true" data-copyable="true" data-prompt="Create a one-page trade price memo with Rapaport reference, list price, negotiated range, fluorescence adjustment, and recommendation. B2B memo format. Cite [filename].">Price memo</button>
+              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="parcellabels" data-output-type="json" data-require-docs="1" data-prompt="Design printable parcel label specs for ALL vault certificates. Return ONLY valid JSON: {&quot;title&quot;: string, &quot;labels&quot;: [{&quot;filename&quot;: string, &quot;carat&quot;: string, &quot;shape&quot;: string, &quot;color&quot;: string, &quot;clarity&quot;: string, &quot;lotId&quot;: string, &quot;qrPlaceholder&quot;: string}]}.">Parcel labels</button>
+              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-studio="true" data-mode="qcchecklist" data-output-type="json" data-require-docs="1" data-use-selected="true" data-prompt="Create a pre-shipment QC checklist from the certificate. Return ONLY valid JSON: {&quot;title&quot;: string, &quot;columns&quot;: [&quot;Check&quot;, &quot;Spec&quot;, &quot;Pass/Fail&quot;, &quot;Notes&quot;], &quot;rows&quot;: string[][], &quot;rowHighlights&quot;: []}. Include measurement, color, clarity, polish, symmetry, fluorescence checks.">QC checklist</button>
+              <button class="feature-btn studio chip text-xs px-2.5 py-1 rounded-full" data-vault-export="true">Vault CSV</button>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="p-4 border-t border-slate-100 flex-shrink-0 bg-white rounded-b-2xl">
+      <div id="chatMessages" class="flex-1 overflow-y-auto custom-scrollbar px-4 py-4 space-y-4 min-h-0 bg-slate-50/40"></div>
+
+      <div class="p-3 border-t border-slate-100 flex-shrink-0 bg-white">
         <div class="chat-input-wrap flex gap-2 items-center">
           <input id="chatInput" type="text" placeholder="Ask your gemologist anything…"
             class="flex-1 px-3 py-2.5 text-sm bg-transparent border-none focus:outline-none text-slate-800 placeholder-slate-400" />
@@ -546,25 +847,6 @@ Cite [filename] for every spec referenced.">Generate marketing</button>
         </div>
       </div>
     </section>
-
-    <!-- Asset Viewer (sidebar) -->
-    <aside id="viewerPanel" class="panel w-full md:w-64 xl:w-72 flex-shrink-0 flex flex-col min-h-0 hidden md:flex">
-      <div class="px-3 py-2.5 border-b border-slate-100 flex items-center justify-between gap-2 flex-shrink-0">
-        <h2 class="panel-label">Asset Viewer</h2>
-        <div id="viewerMeta" class="text-[10px] text-slate-400 truncate max-w-[120px]"></div>
-      </div>
-      <div id="pageTabs" class="px-3 py-1.5 flex gap-1 flex-wrap border-b border-slate-50 hidden flex-shrink-0"></div>
-      <div id="viewerContent" class="flex-1 overflow-y-auto custom-scrollbar p-3 min-h-0 bg-slate-50/30">
-        <div id="viewerEmpty" class="flex flex-col items-center justify-center h-full text-center py-10">
-          <svg class="w-10 h-10 mb-3 text-blue-200" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2L4 9L12 22L20 9L12 2Z" stroke="#93c5fd" stroke-width="1.5" fill="rgba(147,197,253,0.15)"/>
-          </svg>
-          <p class="text-xs text-slate-400 leading-relaxed px-4">Select a source<br/>to preview</p>
-        </div>
-        <div id="viewerMedia" class="hidden flex flex-col items-center justify-center"></div>
-        <pre id="viewerText" class="hidden text-xs text-slate-600 whitespace-pre-wrap font-mono leading-relaxed bg-white p-3 rounded-xl border border-slate-100"></pre>
-      </div>
-    </aside>
   </main>
 
   <div id="toastContainer" class="fixed top-16 right-4 z-50 space-y-2 pointer-events-none"></div>
@@ -579,7 +861,12 @@ Cite [filename] for every spec referenced.">Generate marketing</button>
     let chatHistory = [];
     let isLoading = false;
     let activeMode = null;
+    let viewerState = { zoom: 1, brightness: 100, contrast: 100, rotate: 0 };
+    let viewerMediaEl = null;
+    let viewerBlobUrl = null;
+    let layoutState = { topPct: 50, vaultPct: 25 };
 
+    const LAYOUT_STORAGE_KEY = 'diamatch_layout_v2';
     const MAX_FILES = 15;
     const MAX_FILE_SIZE = 20 * 1024 * 1024;
     const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
@@ -636,7 +923,18 @@ When analyzing uploaded documents:
       negotiation: 'Negotiation Simulator',
       compare: 'Compare Table',
       audit: 'Blind Spot Audit',
-      trade: 'Trade Analysis'
+      trade: 'Trade Analysis',
+      slides: 'Slide Deck',
+      report: 'Trade Report',
+      datatable: 'Data Table',
+      infographic: 'Infographic',
+      video: 'Video Kit',
+      insurance: 'Insurance Letter',
+      rfq: 'RFQ Email',
+      whatsapp: 'WhatsApp Blurb',
+      pricememo: 'Price Memo',
+      parcellabels: 'Parcel Labels',
+      qcchecklist: 'QC Checklist'
     };
 
     const MODE_SYSTEM_ADDENDUM = {
@@ -644,8 +942,44 @@ When analyzing uploaded documents:
       passport: `\n\nYou are also an elite luxury copywriter. Write romantic, client-facing prose — never dry technical reports.`,
       negotiation: `\n\nYou are role-playing as a skeptical diamond buyer in a sales training simulation. Stay in character as the buyer until the jeweler responds. After the jeweler replies, continue the objection handling realistically. Occasionally offer brief coaching tips in parentheses.`,
       compare: `\n\nFormat comparisons as clean Markdown tables. Be exhaustive with specs.`,
-      audit: `\n\nThink like an inventory strategist. Be direct about overstock gaps and market opportunities.`
+      audit: `\n\nThink like an inventory strategist. Be direct about overstock gaps and market opportunities.`,
+      slides: `\n\nYou are a luxury presentation designer for high-end jewelers. Output ONLY valid JSON — no markdown fences, no commentary.`,
+      report: `\n\nYou are a certified gemologist writing formal B2B trade reports. Use professional Markdown with tables.`,
+      datatable: `\n\nYou are a data analyst normalizing diamond certificate data. Output ONLY valid JSON — no markdown fences.`,
+      infographic: `\n\nYou are an infographic designer for luxury jewelry brands. Output ONLY valid JSON — no markdown fences.`,
+      video: `\n\nYou are a luxury jewelry video director. Output ONLY valid JSON production kits — no markdown fences.`,
+      insurance: `\n\nYou are writing formal insurance appraisal documents. Professional, legally cautious tone.`,
+      rfq: `\n\nYou are drafting B2B supplier communications for diamond traders.`,
+      whatsapp: `\n\nYou write ultra-concise trade broker listings for WhatsApp groups.`,
+      pricememo: `\n\nYou write internal trade price memos for diamond dealers.`,
+      parcellabels: `\n\nYou design warehouse parcel label data. Output ONLY valid JSON.`,
+      qcchecklist: `\n\nYou create pre-shipment quality control checklists. Output ONLY valid JSON.`
     };
+
+    const STUDIO_ARTIFACT_TYPES = {
+      slides: 'slides',
+      datatable: 'table',
+      infographic: 'infographic',
+      video: 'video_kit',
+      parcellabels: 'infographic',
+      qcchecklist: 'table',
+      report: 'report',
+      insurance: 'report',
+      rfq: 'report',
+      pricememo: 'report',
+      whatsapp: 'report'
+    };
+
+    const artifactStore = {};
+    let artifactCounter = 0;
+
+    const EXPORT_LIBS = {
+      pptxgenjs: 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js',
+      html2pdf: 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js',
+      xlsx: 'https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js',
+      html2canvas: 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'
+    };
+    const loadedLibs = {};
 
     // ─── DOM refs ───────────────────────────────────────────────────────────────
     const apiKeyInput = document.getElementById('apiKeyInput');
@@ -665,6 +999,17 @@ When analyzing uploaded documents:
     const chatInput = document.getElementById('chatInput');
     const sendBtn = document.getElementById('sendBtn');
     const loadingIndicator = document.getElementById('loadingIndicator');
+    const viewerToolbar = document.getElementById('viewerToolbar');
+    const viewerMediaWrap = document.getElementById('viewerMediaWrap');
+    const viewerPdfFrame = document.getElementById('viewerPdfFrame');
+    const viewerLinkFrame = document.getElementById('viewerLinkFrame');
+    const topPane = document.getElementById('topPane');
+    const workspace = document.getElementById('workspace');
+    const chatPanel = document.getElementById('chatPanel');
+    const vaultPanel = document.getElementById('vaultPanel');
+    const viewerPanel = document.getElementById('viewerPanel');
+    const viewerArtifact = document.getElementById('viewerArtifact');
+    const loadingLabel = document.getElementById('loadingLabel');
 
     // ─── API key ────────────────────────────────────────────────────────────────
     function getApiKey() {
@@ -917,6 +1262,7 @@ When analyzing uploaded documents:
           numPages: 1,
           base64: null,
           dataUrl: null,
+          arrayBuffer: null,
           geminiInline: false
         };
 
@@ -933,19 +1279,22 @@ When analyzing uploaded documents:
             numPages,
             hasText,
             base64: b64,
+            arrayBuffer: buffer,
             geminiInline: true
           };
           if (!hasText) {
             showToast(`${filename}: no extractable text — Gemini will use visual PDF analysis`, 'error');
           }
         } else if (category === 'text') {
-          const rawText = await readFileAsText(file);
+          const buffer = await readFileAsArrayBuffer(file);
+          const rawText = new TextDecoder('utf-8').decode(buffer);
           const { text } = truncateText(rawText);
           docTextStore[filename] = {
             ...baseEntry,
             type: 'text',
             fullText: text,
-            hasText: text.length > 0
+            hasText: text.length > 0,
+            arrayBuffer: buffer
           };
         } else if (category === 'image') {
           const buffer = await readFileAsArrayBuffer(file);
@@ -958,6 +1307,7 @@ When analyzing uploaded documents:
             hasText: false,
             base64: b64,
             dataUrl,
+            arrayBuffer: buffer,
             geminiInline: true
           };
         } else if (category === 'video') {
@@ -971,6 +1321,7 @@ When analyzing uploaded documents:
             hasText: false,
             base64: b64,
             dataUrl,
+            arrayBuffer: buffer,
             geminiInline: true
           };
         } else if (category === 'audio') {
@@ -984,9 +1335,11 @@ When analyzing uploaded documents:
             hasText: false,
             base64: b64,
             dataUrl,
+            arrayBuffer: buffer,
             geminiInline: true
           };
         } else {
+          const buffer = await readFileAsArrayBuffer(file);
           let fullText = `[File: ${filename}] — ${mime}, ${formatFileSize(file.size)}`;
           try {
             const snippet = await readFileAsText(file);
@@ -999,7 +1352,8 @@ When analyzing uploaded documents:
             ...baseEntry,
             type: 'binary',
             fullText,
-            hasText: fullText.length > 0 && !fullText.startsWith('[File:')
+            hasText: fullText.length > 0 && !fullText.startsWith('[File:'),
+            arrayBuffer: buffer
           };
         }
 
@@ -1085,7 +1439,8 @@ When analyzing uploaded documents:
           VIDEO: 'bg-rose-500/20 text-rose-300',
           AUDIO: 'bg-orange-500/20 text-orange-300',
           DOC: 'bg-slate-500/20 text-slate-300',
-          FILE: 'bg-gray-500/20 text-gray-300'
+          FILE: 'bg-gray-500/20 text-gray-300',
+          GEN: 'bg-teal-500/20 text-teal-600'
         };
         const badgeClass = badgeColors[doc.badge] || badgeColors.FILE;
 
@@ -1108,14 +1463,247 @@ When analyzing uploaded documents:
     }
 
     // ─── Asset Viewer ───────────────────────────────────────────────────────────
+    function revokeViewerBlob() {
+      if (viewerBlobUrl) {
+        URL.revokeObjectURL(viewerBlobUrl);
+        viewerBlobUrl = null;
+      }
+    }
+
+    function resetViewerState() {
+      viewerState = { zoom: 1, brightness: 100, contrast: 100, rotate: 0 };
+      viewerMediaEl = null;
+    }
+
+    function applyMediaTransform() {
+      if (!viewerMediaEl) return;
+      const { zoom, brightness, contrast, rotate } = viewerState;
+      viewerMediaEl.style.transform = `scale(${zoom}) rotate(${rotate}deg)`;
+      viewerMediaEl.style.filter = `brightness(${brightness}%) contrast(${contrast}%)`;
+    }
+
+    function getViewerTextContent(doc) {
+      if (doc.type === 'pdf' && doc.pages?.length) {
+        const pageData = doc.pages.find(p => p.pageNum === selectedPage) || doc.pages[0];
+        return pageData.text || '';
+      }
+      return doc.fullText || '';
+    }
+
+    function base64ToBlob(b64, mime) {
+      const bin = atob(b64);
+      const arr = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+      return new Blob([arr], { type: mime || 'application/octet-stream' });
+    }
+
+    function getAssetBlob(doc) {
+      if (doc.arrayBuffer) return new Blob([doc.arrayBuffer], { type: doc.mimeType || 'application/octet-stream' });
+      if (doc.base64) return base64ToBlob(doc.base64, doc.mimeType);
+      if (doc.fullText && (doc.type === 'text' || doc.type === 'binary')) {
+        return new Blob([doc.fullText], { type: doc.mimeType || 'text/plain' });
+      }
+      return null;
+    }
+
+    async function saveCurrentAsset() {
+      const doc = docTextStore[selectedFilename];
+      if (!doc) return;
+      if (doc.type === 'url' && doc.url) {
+        window.open(doc.url, '_blank', 'noopener,noreferrer');
+        showToast('Opened link in new tab');
+        return;
+      }
+      const blob = getAssetBlob(doc);
+      if (!blob) {
+        showToast('Nothing to save for this source', 'error');
+        return;
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = selectedFilename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast('File saved');
+    }
+
+    async function copyAssetText() {
+      const doc = docTextStore[selectedFilename];
+      if (!doc) return;
+      if (doc.type === 'url' && doc.url) {
+        copyToClipboard(doc.fullText || doc.url);
+        return;
+      }
+      const text = getViewerTextContent(doc);
+      if (text) copyToClipboard(text);
+      else showToast('No text to copy', 'error');
+    }
+
+    async function copyAssetImage() {
+      const doc = docTextStore[selectedFilename];
+      if (!doc) return;
+      try {
+        let blob;
+        if (doc.dataUrl) {
+          blob = await (await fetch(doc.dataUrl)).blob();
+        } else if (doc.url && (doc.mimeType || '').startsWith('image/')) {
+          blob = await (await fetch(doc.url)).blob();
+        } else if (viewerMediaEl?.tagName === 'IMG' && viewerMediaEl.src) {
+          blob = await (await fetch(viewerMediaEl.src)).blob();
+        } else {
+          showToast('No image to copy', 'error');
+          return;
+        }
+        await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+        showToast('Image copied to clipboard');
+      } catch (_) {
+        showToast('Copy failed — try Download instead', 'error');
+      }
+    }
+
+    async function copyAssetUrl() {
+      const doc = docTextStore[selectedFilename];
+      if (doc?.url) copyToClipboard(doc.url);
+      else showToast('No URL to copy', 'error');
+    }
+
+    function makeToolBtn(label, title, onClick) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'viewer-tool-btn';
+      btn.textContent = label;
+      if (title) btn.title = title;
+      btn.addEventListener('click', onClick);
+      return btn;
+    }
+
+    function addToolGroup(toolbar, label, buttons) {
+      const group = document.createElement('div');
+      group.className = 'viewer-tool-group';
+      if (label) {
+        const lbl = document.createElement('span');
+        lbl.className = 'text-[10px] text-slate-400 mr-1';
+        lbl.textContent = label;
+        group.appendChild(lbl);
+      }
+      buttons.forEach(b => group.appendChild(b));
+      toolbar.appendChild(group);
+    }
+
+    function buildViewerToolbar(doc) {
+      viewerToolbar.innerHTML = '';
+      const artifact = doc.type === 'artifact' ? getArtifactByDoc(doc) : null;
+      if (artifact) {
+        if (artifact.artifactType === 'slides') addToolGroup(viewerToolbar, 'Export', [makeToolBtn('PPTX', 'Download PowerPoint', () => exportArtifact(artifact.id, 'pptx'))]);
+        if (artifact.artifactType === 'report') addToolGroup(viewerToolbar, 'Export', [makeToolBtn('PDF', 'Download PDF', () => exportArtifact(artifact.id, 'pdf'))]);
+        if (artifact.artifactType === 'table') addToolGroup(viewerToolbar, 'Export', [
+          makeToolBtn('CSV', 'Download CSV', () => exportArtifact(artifact.id, 'csv')),
+          makeToolBtn('XLSX', 'Download Excel', () => exportArtifact(artifact.id, 'xlsx'))
+        ]);
+        if (artifact.artifactType === 'infographic') addToolGroup(viewerToolbar, 'Export', [makeToolBtn('PNG', 'Download PNG', () => exportArtifact(artifact.id, 'png'))]);
+        if (artifact.artifactType === 'video_kit') {
+          const btns = [
+            makeToolBtn('SRT', 'Download captions', () => exportArtifact(artifact.id, 'srt')),
+            makeToolBtn('JSON', 'Download kit', () => exportArtifact(artifact.id, 'json'))
+          ];
+          if (artifact.videoMp4Blob) btns.push(makeToolBtn('MP4', 'Download video', () => exportArtifact(artifact.id, 'mp4')));
+          addToolGroup(viewerToolbar, 'Export', btns);
+        }
+        viewerToolbar.classList.toggle('hidden', viewerToolbar.children.length === 0);
+        return;
+      }
+
+      const mime = doc.mimeType || '';
+      const isLinkedImage = doc.type === 'url' && mime.startsWith('image/');
+      const isLinkedVideo = doc.type === 'url' && mime.startsWith('video/');
+      const isImage = doc.type === 'image' || isLinkedImage;
+      const isVideo = doc.type === 'video' || isLinkedVideo;
+      const isMedia = isImage || isVideo;
+      const hasSave = doc.type !== 'url' || doc.url;
+      const hasText = !!(getViewerTextContent(doc) || doc.url);
+
+      if (isMedia) {
+        addToolGroup(viewerToolbar, 'Zoom', [
+          makeToolBtn('−', 'Zoom out', () => { viewerState.zoom = Math.max(0.25, viewerState.zoom - 0.25); applyMediaTransform(); }),
+          makeToolBtn('100%', 'Reset zoom', () => { viewerState.zoom = 1; applyMediaTransform(); }),
+          makeToolBtn('+', 'Zoom in', () => { viewerState.zoom = Math.min(4, viewerState.zoom + 0.25); applyMediaTransform(); }),
+          makeToolBtn('Fit', 'Fit to panel', () => {
+            if (!viewerMediaEl || !viewerMediaWrap) return;
+            viewerState.rotate = 0;
+            const wrap = viewerMediaWrap.getBoundingClientRect();
+            let w = viewerMediaEl.naturalWidth || viewerMediaEl.videoWidth || viewerMediaEl.offsetWidth;
+            let h = viewerMediaEl.naturalHeight || viewerMediaEl.videoHeight || viewerMediaEl.offsetHeight;
+            if (w && h) {
+              const scale = Math.min((wrap.width - 24) / w, (wrap.height - 24) / h, 1);
+              viewerState.zoom = Math.max(0.25, scale);
+            } else {
+              viewerState.zoom = 1;
+            }
+            applyMediaTransform();
+          })
+        ]);
+        addToolGroup(viewerToolbar, 'Edit', [
+          makeToolBtn('☀−', 'Brightness down', () => { viewerState.brightness = Math.max(50, viewerState.brightness - 10); applyMediaTransform(); }),
+          makeToolBtn('☀+', 'Brightness up', () => { viewerState.brightness = Math.min(200, viewerState.brightness + 10); applyMediaTransform(); }),
+          makeToolBtn('◐−', 'Contrast down', () => { viewerState.contrast = Math.max(50, viewerState.contrast - 10); applyMediaTransform(); }),
+          makeToolBtn('◐+', 'Contrast up', () => { viewerState.contrast = Math.min(200, viewerState.contrast + 10); applyMediaTransform(); }),
+          makeToolBtn('↻', 'Rotate 90°', () => { viewerState.rotate = (viewerState.rotate + 90) % 360; applyMediaTransform(); }),
+          makeToolBtn('Reset', 'Reset edits', () => { viewerState.brightness = 100; viewerState.contrast = 100; viewerState.rotate = 0; viewerState.zoom = 1; applyMediaTransform(); })
+        ]);
+      }
+
+      const copyButtons = [];
+      if (hasText) copyButtons.push(makeToolBtn('Copy text', 'Copy text content', copyAssetText));
+      if (isImage) copyButtons.push(makeToolBtn('Copy image', 'Copy image to clipboard', copyAssetImage));
+      if (doc.type === 'url') copyButtons.push(makeToolBtn('Copy URL', 'Copy link', copyAssetUrl));
+      if (copyButtons.length) addToolGroup(viewerToolbar, 'Copy', copyButtons);
+
+      if (hasSave) {
+        addToolGroup(viewerToolbar, 'Save', [
+          makeToolBtn('Download', 'Save file', saveCurrentAsset)
+        ]);
+      }
+
+      viewerToolbar.classList.toggle('hidden', viewerToolbar.children.length === 0);
+    }
+
     function clearViewerPanels() {
       viewerEmpty.classList.add('hidden');
       viewerText.classList.add('hidden');
+      viewerMediaWrap.classList.add('hidden');
       viewerMedia.classList.add('hidden');
       viewerMedia.innerHTML = '';
       viewerText.textContent = '';
       pageTabs.classList.add('hidden');
       pageTabs.innerHTML = '';
+      viewerPdfFrame.classList.add('hidden');
+      viewerPdfFrame.removeAttribute('src');
+      viewerLinkFrame.classList.add('hidden');
+      viewerLinkFrame.removeAttribute('src');
+      viewerArtifact.classList.add('hidden');
+      viewerArtifact.innerHTML = '';
+      viewerToolbar.classList.add('hidden');
+      viewerToolbar.innerHTML = '';
+      revokeViewerBlob();
+      resetViewerState();
+    }
+
+    function renderPdfPageTabs(doc) {
+      if (!doc.pages || doc.pages.length <= 1) return;
+      pageTabs.classList.remove('hidden');
+      doc.pages.forEach(pg => {
+        const tab = document.createElement('button');
+        tab.className = `page-tab text-xs px-2 py-1 rounded border border-slate-200 text-slate-500 transition-all ${pg.pageNum === selectedPage ? 'active' : ''}`;
+        tab.textContent = `Page ${pg.pageNum}`;
+        tab.addEventListener('click', () => {
+          selectedPage = pg.pageNum;
+          renderViewer();
+        });
+        pageTabs.appendChild(tab);
+      });
     }
 
     function renderViewer() {
@@ -1129,65 +1717,118 @@ When analyzing uploaded documents:
       const doc = docTextStore[selectedFilename];
       clearViewerPanels();
 
-      const typeLabel = { pdf: 'PDF', text: 'Document', image: 'Image', video: 'Video', audio: 'Audio', url: 'Link', binary: 'File' }[doc.type] || 'File';
-      viewerMeta.textContent = doc.type === 'pdf'
+      const typeLabel = { pdf: 'PDF', text: 'Document', image: 'Image', video: 'Video', audio: 'Audio', url: 'Link', binary: 'File', artifact: 'Generated' }[doc.type] || 'File';
+      viewerMeta.textContent = doc.type === 'artifact'
+        ? `${selectedFilename} · ${getArtifactByDoc(doc)?.title || 'Studio output'}`
+        : doc.type === 'pdf'
         ? `${selectedFilename} · ${doc.numPages} page${doc.numPages !== 1 ? 's' : ''}`
         : doc.type === 'url'
           ? `${selectedFilename} · Link`
           : `${selectedFilename} · ${typeLabel} · ${formatFileSize(doc.fileSize || 0)}`;
 
-      if (doc.type === 'url' && doc.url) {
-        viewerMedia.classList.remove('hidden');
-        const wrap = document.createElement('div');
-        wrap.className = 'w-full max-w-2xl';
+      buildViewerToolbar(doc);
+
+      if (doc.type === 'artifact') {
+        const artifact = getArtifactByDoc(doc);
+        if (artifact) {
+          viewerArtifact.classList.remove('hidden');
+          viewerArtifact.style.flex = '1';
+          renderArtifactPreview(viewerArtifact, artifact);
+        } else {
+          viewerEmpty.classList.remove('hidden');
+        }
+      } else if (doc.type === 'pdf') {
+        viewerPdfFrame.classList.remove('hidden');
+        if (doc.base64) {
+          const blob = base64ToBlob(doc.base64, 'application/pdf');
+          viewerBlobUrl = URL.createObjectURL(blob);
+          viewerPdfFrame.src = viewerBlobUrl + '#toolbar=1&navpanes=0';
+        }
+        if (doc.pages?.length) {
+          renderPdfPageTabs(doc);
+          viewerText.classList.remove('hidden');
+          viewerText.style.flex = doc.pages.length > 1 ? '0 0 38%' : '0 0 30%';
+          viewerPdfFrame.style.flex = '1';
+          const pageData = doc.pages.find(p => p.pageNum === selectedPage) || doc.pages[0];
+          viewerText.textContent = pageData.text;
+        } else if (doc.fullText) {
+          viewerText.classList.remove('hidden');
+          viewerText.style.flex = '0 0 30%';
+          viewerText.textContent = doc.fullText;
+        }
+      } else if (doc.type === 'url' && doc.url) {
         const mime = doc.mimeType || '';
-        const safeUrl = doc.url.replace(/"/g, '&quot;');
+        const safeUrl = doc.url;
 
         if (mime.startsWith('image/')) {
-          wrap.innerHTML = `
-            <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-600 hover:underline break-all mb-3 block">${doc.url}</a>
-            <img src="${safeUrl}" alt="Linked image" class="max-w-full rounded-xl border border-white/10" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
-            <p class="media-placeholder hidden">Image preview blocked — open link below. Gemini can still analyze the URL.</p>
-          `;
+          viewerMediaWrap.classList.remove('hidden');
+          viewerMedia.classList.remove('hidden');
+          const link = document.createElement('a');
+          link.href = safeUrl;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          link.className = 'text-[10px] text-blue-600 hover:underline break-all mb-2 block w-full text-center';
+          link.textContent = safeUrl;
+          const img = document.createElement('img');
+          img.src = safeUrl;
+          img.alt = 'Linked image';
+          img.onerror = () => { link.textContent += ' — preview blocked, open link'; };
+          viewerMedia.appendChild(link);
+          viewerMedia.appendChild(img);
+          viewerMediaEl = img;
+          applyMediaTransform();
         } else if (mime === 'application/pdf') {
-          wrap.innerHTML = `
-            <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-600 hover:underline break-all mb-3 block">${doc.url}</a>
-            <iframe src="${safeUrl}" class="w-full h-[65vh] rounded-xl border border-white/10 bg-white/5" title="PDF preview"></iframe>
-          `;
+          viewerPdfFrame.classList.remove('hidden');
+          viewerPdfFrame.src = safeUrl;
         } else if (mime.startsWith('video/')) {
-          wrap.innerHTML = `
-            <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-600 hover:underline break-all mb-3 block">${doc.url}</a>
-            <video src="${safeUrl}" controls playsinline class="w-full rounded-xl border border-white/10"></video>
-          `;
+          viewerMediaWrap.classList.remove('hidden');
+          viewerMedia.classList.remove('hidden');
+          const video = document.createElement('video');
+          video.src = safeUrl;
+          video.controls = true;
+          video.playsInline = true;
+          video.className = 'max-w-full';
+          viewerMedia.appendChild(video);
+          viewerMediaEl = video;
+          applyMediaTransform();
+        } else if (mime.startsWith('text/') || safeUrl.match(/\.(html?|txt|md|csv)(\?|$)/i)) {
+          viewerLinkFrame.classList.remove('hidden');
+          viewerLinkFrame.src = safeUrl;
+          viewerText.classList.remove('hidden');
+          viewerText.style.flex = '0 0 28%';
+          viewerText.textContent = doc.fullText || `Link: ${safeUrl}`;
         } else {
-          wrap.innerHTML = `
-            <div class="text-center py-8 px-4 rounded-xl border border-white/10 bg-[#1a1a24]">
-              <svg class="w-10 h-10 mx-auto mb-3 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-              <p class="text-sm text-slate-500 mb-3">Web link source</p>
-              <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 hover:underline break-all">${doc.url}</a>
-              <p class="text-xs text-slate-400 mt-4">Gemini fetches this URL server-side for analysis in chat.</p>
-            </div>
-          `;
+          viewerLinkFrame.classList.remove('hidden');
+          viewerLinkFrame.src = safeUrl;
+          viewerText.classList.remove('hidden');
+          viewerText.style.flex = '0 0 22%';
+          viewerText.textContent = doc.fullText || `Web link: ${safeUrl}\n\nIf preview is blocked by the site, use Copy URL or chat to analyze via Gemini.`;
         }
-        viewerMedia.appendChild(wrap);
       } else if (doc.type === 'image' && doc.dataUrl) {
+        viewerMediaWrap.classList.remove('hidden');
         viewerMedia.classList.remove('hidden');
         const img = document.createElement('img');
         img.src = doc.dataUrl;
         img.alt = selectedFilename;
         viewerMedia.appendChild(img);
+        viewerMediaEl = img;
+        applyMediaTransform();
       } else if (doc.type === 'video' && doc.dataUrl) {
+        viewerMediaWrap.classList.remove('hidden');
         viewerMedia.classList.remove('hidden');
         const video = document.createElement('video');
         video.src = doc.dataUrl;
         video.controls = true;
         video.playsInline = true;
-        video.className = 'w-full';
+        video.className = 'max-w-full';
         viewerMedia.appendChild(video);
+        viewerMediaEl = video;
+        applyMediaTransform();
       } else if (doc.type === 'audio' && doc.dataUrl) {
+        viewerMediaWrap.classList.remove('hidden');
         viewerMedia.classList.remove('hidden');
         const wrap = document.createElement('div');
-        wrap.className = 'w-full max-w-lg text-center';
+        wrap.className = 'w-full max-w-lg text-center p-4';
         wrap.innerHTML = `<p class="text-sm text-slate-500 mb-4">${selectedFilename}</p>`;
         const audio = document.createElement('audio');
         audio.src = doc.dataUrl;
@@ -1195,30 +1836,107 @@ When analyzing uploaded documents:
         audio.className = 'w-full';
         wrap.appendChild(audio);
         viewerMedia.appendChild(wrap);
-      } else if (doc.type === 'pdf' && doc.pages && doc.pages.length > 1) {
+      } else if (doc.type === 'text' || doc.type === 'binary') {
         viewerText.classList.remove('hidden');
-        pageTabs.classList.remove('hidden');
-        doc.pages.forEach(pg => {
-          const tab = document.createElement('button');
-          tab.className = `page-tab text-xs px-2 py-1 rounded border border-slate-200 text-slate-500 transition-all ${pg.pageNum === selectedPage ? 'active' : ''}`;
-          tab.textContent = `Page ${pg.pageNum}`;
-          tab.addEventListener('click', () => {
-            selectedPage = pg.pageNum;
-            renderViewer();
-          });
-          pageTabs.appendChild(tab);
-        });
-        const pageData = doc.pages.find(p => p.pageNum === selectedPage) || doc.pages[0];
-        viewerText.textContent = pageData.text;
+        viewerText.style.flex = '1';
+        viewerText.textContent = doc.fullText || '(No preview content)';
       } else if (doc.fullText) {
         viewerText.classList.remove('hidden');
+        viewerText.style.flex = '1';
         viewerText.textContent = doc.fullText;
       } else {
-        viewerMedia.classList.remove('hidden');
-        viewerMedia.innerHTML = `<p class="media-placeholder">Preview not available for this file type.<br>Gemini can still analyze it when referenced in chat.</p>`;
+        viewerEmpty.classList.remove('hidden');
+        viewerEmpty.querySelector('p').textContent = 'Preview not available — Gemini can still analyze this in chat.';
       }
 
       document.getElementById('viewerContent').scrollTop = 0;
+    }
+
+    // ─── Resizable layout ─────────────────────────────────────────────────────────
+    function loadLayout() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(LAYOUT_STORAGE_KEY));
+        if (typeof saved?.topPct === 'number') layoutState.topPct = saved.topPct;
+        if (typeof saved?.vaultPct === 'number') layoutState.vaultPct = saved.vaultPct;
+      } catch (_) { /* ignore */ }
+    }
+
+    function applyLayout() {
+      topPane.style.flex = `0 0 ${layoutState.topPct}%`;
+      vaultPanel.style.flex = `0 0 ${layoutState.vaultPct}%`;
+      viewerPanel.style.flex = '1';
+      chatPanel.style.flex = '1';
+    }
+
+    function saveLayout() {
+      try {
+        localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(layoutState));
+      } catch (_) { /* ignore */ }
+    }
+
+    function setupResize(handle, onDelta, axis) {
+      let start = 0;
+      let dragging = false;
+
+      const onMove = (e) => {
+        if (!dragging) return;
+        const coord = axis === 'vertical' ? e.clientY : e.clientX;
+        const delta = coord - start;
+        start = coord;
+        onDelta(delta);
+      };
+
+      const onUp = () => {
+        dragging = false;
+        handle.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      };
+
+      handle.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        dragging = true;
+        start = axis === 'vertical' ? e.clientY : e.clientX;
+        handle.classList.add('dragging');
+        document.body.style.cursor = axis === 'vertical' ? 'row-resize' : 'col-resize';
+        document.body.style.userSelect = 'none';
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+    }
+
+    function initSplitPanes() {
+      loadLayout();
+      applyLayout();
+
+      const handleTopChat = document.getElementById('handleTopChat');
+      const handleVaultViewer = document.getElementById('handleVaultViewer');
+
+      setupResize(handleTopChat, (dy) => {
+        const rect = workspace.getBoundingClientRect();
+        const handleH = handleTopChat.offsetHeight;
+        const avail = rect.height - handleH;
+        const topH = topPane.getBoundingClientRect().height + dy;
+        let pct = (topH / avail) * 100;
+        pct = Math.max(20, Math.min(80, pct));
+        layoutState.topPct = pct;
+        applyLayout();
+        saveLayout();
+      }, 'vertical');
+
+      setupResize(handleVaultViewer, (dx) => {
+        const rect = topPane.getBoundingClientRect();
+        const handleW = handleVaultViewer.offsetWidth;
+        const avail = rect.width - handleW;
+        const vaultW = vaultPanel.getBoundingClientRect().width + dx;
+        let pct = (vaultW / avail) * 100;
+        pct = Math.max(15, Math.min(55, pct));
+        layoutState.vaultPct = pct;
+        applyLayout();
+        saveLayout();
+      }, 'horizontal');
     }
 
     // ─── Context builder for Gemini ─────────────────────────────────────────────
@@ -1279,6 +1997,464 @@ When analyzing uploaded documents:
       return keywords.some(k => lower.includes(k));
     }
 
+    // ─── Studio Generation ────────────────────────────────────────────────────────
+    async function loadExportLib(key) {
+      if (loadedLibs[key]) return;
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = EXPORT_LIBS[key];
+        s.onload = () => { loadedLibs[key] = true; resolve(); };
+        s.onerror = () => reject(new Error(`Failed to load ${key}`));
+        document.head.appendChild(s);
+      });
+    }
+
+    function parseArtifactReply(text, outputType) {
+      if (!text) return { markdown: '', data: null };
+      if (outputType === 'json') {
+        try {
+          const cleaned = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+          const data = JSON.parse(cleaned);
+          return { markdown: summarizeArtifactData(data), data };
+        } catch (_) {
+          return { markdown: text, data: null };
+        }
+      }
+      return { markdown: text, data: { markdown: text } };
+    }
+
+    function summarizeArtifactData(data) {
+      if (!data) return '';
+      if (data.title && data.slides) return `**${data.title}** — ${data.slides.length} slides generated. Open in Viewer or Download PPTX.`;
+      if (data.title && data.columns && data.rows) return `**${data.title}** — ${data.rows.length} rows × ${data.columns.length} columns. Open in Viewer or export CSV/XLSX.`;
+      if (data.title && data.stats) return `**${data.title}** — Infographic with ${data.stats.length} stat blocks. Open in Viewer or Download PNG.`;
+      if (data.title && data.scenes) return `**${data.title}** — Video kit: ${data.scenes.length} scenes. Open in Viewer or download SRT/JSON.`;
+      if (data.title && data.labels) return `**${data.title}** — ${data.labels.length} parcel labels ready.`;
+      if (data.markdown) return data.markdown.slice(0, 300) + (data.markdown.length > 300 ? '…' : '');
+      return `**${data.title || 'Generated artifact'}** ready. Open in Viewer or Download.`;
+    }
+
+    function createArtifact(mode, data, title) {
+      artifactCounter++;
+      const id = `GEN-${mode}-${Date.now()}-${artifactCounter}`;
+      const artifactType = STUDIO_ARTIFACT_TYPES[mode] || 'report';
+      const artifact = {
+        id,
+        mode,
+        artifactType,
+        title: title || data?.title || MODE_LABELS[mode] || 'Generated',
+        data,
+        createdAt: Date.now(),
+        videoMp4Blob: null,
+        videoMp4Url: null,
+        heroImageDataUrl: null
+      };
+      artifactStore[id] = artifact;
+      return artifact;
+    }
+
+    function artifactVaultFilename(artifact) {
+      const ext = { slides: 'slides.json', table: 'table.json', infographic: 'infographic.json', video_kit: 'video-kit.json', report: 'report.md' }[artifact.artifactType] || 'gen.json';
+      return `${artifact.title.replace(/[^\w\s-]/g, '').trim().slice(0, 40) || artifact.id}.${ext}`;
+    }
+
+    function saveArtifactToVault(artifactId) {
+      const artifact = artifactStore[artifactId];
+      if (!artifact) return;
+      let filename = artifactVaultFilename(artifact);
+      if (docTextStore[filename]) filename = `${artifact.id}.${filename.split('.').pop()}`;
+      docTextStore[filename] = {
+        type: 'artifact',
+        artifactId,
+        badge: 'GEN',
+        mimeType: 'application/json',
+        fileSize: 0,
+        uploadedAt: artifact.createdAt,
+        fullText: summarizeArtifactData(artifact.data),
+        hasText: true,
+        pages: null,
+        numPages: 1
+      };
+      if (!docOrder.includes(filename)) docOrder.push(filename);
+      selectDocument(filename);
+      showToast(`Saved to Vault: ${filename}`);
+    }
+
+    function openArtifactInViewer(artifactId) {
+      const artifact = artifactStore[artifactId];
+      if (!artifact) return;
+      const existing = docOrder.find(f => docTextStore[f]?.artifactId === artifactId);
+      if (existing) {
+        selectDocument(existing);
+      } else {
+        saveArtifactToVault(artifactId);
+      }
+    }
+
+    function getArtifactByDoc(doc) {
+      return doc?.artifactId ? artifactStore[doc.artifactId] : null;
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function buildInfographicHtml(data, heroImageDataUrl) {
+      const stats = (data.stats || []).map(s => `
+        <div style="background:${s.accent ? '#f5f0e8' : '#eef2f6'};border-radius:12px;padding:12px;text-align:center;border:1px solid rgba(15,23,42,0.08)">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#64748b">${escapeHtml(s.label)}</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:#1d4ed8;margin-top:4px">${escapeHtml(s.value)}</div>
+        </div>`).join('');
+      const callouts = (data.callouts || []).map(c => `<li style="margin-bottom:4px">${escapeHtml(c)}</li>`).join('');
+      const hero = heroImageDataUrl ? `<img src="${heroImageDataUrl}" style="width:100%;max-height:140px;object-fit:cover;border-radius:12px;margin-bottom:12px" alt="Hero"/>` : '';
+      return `<div id="infographicExportRoot" style="font-family:Inter,sans-serif;background:linear-gradient(160deg,#f8fafc,#eef2f7);padding:20px;border-radius:16px;border:1px solid rgba(15,23,42,0.08)">
+        ${hero}
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.75rem;color:#1e293b;margin:0 0 4px">${escapeHtml(data.title || '')}</h2>
+        <p style="color:#64748b;font-size:0.8rem;margin:0 0 16px">${escapeHtml(data.subtitle || '')}</p>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px">${stats}</div>
+        ${callouts ? `<ul style="font-size:0.75rem;color:#475569;padding-left:18px;margin:0 0 12px">${callouts}</ul>` : ''}
+        <div style="font-size:0.65rem;color:#94a3b8;border-top:1px solid rgba(15,23,42,0.08);padding-top:8px">${escapeHtml(data.footer || '')}</div>
+      </div>`;
+    }
+
+    function buildParcelLabelsHtml(data) {
+      const labels = (data.labels || []).map(l => `
+        <div style="border:2px dashed #cbd5e1;border-radius:10px;padding:12px;margin-bottom:8px;font-size:0.7rem">
+          <strong>${escapeHtml(l.filename)}</strong><br/>
+          ${escapeHtml(l.carat)} ct · ${escapeHtml(l.shape)} · ${escapeHtml(l.color)}/${escapeHtml(l.clarity)}<br/>
+          Lot: ${escapeHtml(l.lotId)} · QR: ${escapeHtml(l.qrPlaceholder)}
+        </div>`).join('');
+      return `<div id="infographicExportRoot" style="font-family:Inter,sans-serif;padding:16px"><h3 style="font-family:'Cormorant Garamond',serif">${escapeHtml(data.title || 'Parcel Labels')}</h3>${labels}</div>`;
+    }
+
+    function escapeHtml(str) {
+      return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function renderSlideCarousel(container, data) {
+      const slides = data.slides || [];
+      if (!slides.length) { container.innerHTML = '<p class="text-xs text-slate-400">No slides</p>'; return; }
+      let idx = 0;
+      container.innerHTML = '';
+      const wrap = document.createElement('div');
+      wrap.className = 'slide-carousel';
+      const main = document.createElement('div');
+      main.className = 'slide-carousel-main';
+      const nav = document.createElement('div');
+      nav.className = 'slide-carousel-nav';
+      const prev = document.createElement('button');
+      prev.className = 'viewer-tool-btn';
+      prev.textContent = '← Prev';
+      const counter = document.createElement('span');
+      counter.className = 'text-xs text-slate-500';
+      const next = document.createElement('button');
+      next.className = 'viewer-tool-btn';
+      next.textContent = 'Next →';
+      function renderSlide() {
+        const s = slides[idx];
+        const bullets = (s.bullets || []).map(b => `<li>${escapeHtml(b)}</li>`).join('');
+        main.innerHTML = `<div><h3>${escapeHtml(s.title)}</h3>${bullets ? `<ul>${bullets}</ul>` : ''}${s.speakerNotes ? `<p style="font-size:0.65rem;color:#94a3b8;margin-top:12px;font-style:italic">${escapeHtml(s.speakerNotes)}</p>` : ''}</div>`;
+        counter.textContent = `${idx + 1} / ${slides.length}`;
+      }
+      prev.onclick = () => { idx = (idx - 1 + slides.length) % slides.length; renderSlide(); };
+      next.onclick = () => { idx = (idx + 1) % slides.length; renderSlide(); };
+      nav.append(prev, counter, next);
+      wrap.append(main, nav);
+      container.appendChild(wrap);
+      renderSlide();
+    }
+
+    function renderDataTable(container, data) {
+      const cols = data.columns || [];
+      const rows = data.rows || [];
+      const highlights = new Set(data.rowHighlights || []);
+      container.innerHTML = '';
+      const wrap = document.createElement('div');
+      wrap.className = 'artifact-table-wrap';
+      const table = document.createElement('table');
+      table.className = 'artifact-table';
+      const thead = document.createElement('thead');
+      const hr = document.createElement('tr');
+      cols.forEach((c, ci) => {
+        const th = document.createElement('th');
+        th.textContent = c;
+        th.addEventListener('click', () => {
+          const sorted = [...rows].sort((a, b) => String(a[ci]).localeCompare(String(b[ci]), undefined, { numeric: true }));
+          renderBody(sorted);
+        });
+        hr.appendChild(th);
+      });
+      thead.appendChild(hr);
+      table.appendChild(thead);
+      const tbody = document.createElement('tbody');
+      table.appendChild(tbody);
+      function renderBody(rowData) {
+        tbody.innerHTML = '';
+        rowData.forEach((row, ri) => {
+          const tr = document.createElement('tr');
+          if (highlights.has(ri)) tr.className = 'highlight';
+          row.forEach(cell => {
+            const td = document.createElement('td');
+            td.textContent = cell;
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+      }
+      renderBody(rows);
+      wrap.appendChild(table);
+      container.appendChild(wrap);
+    }
+
+    function renderVideoKitView(container, artifact) {
+      const data = artifact.data;
+      container.innerHTML = '';
+      const wrap = document.createElement('div');
+      wrap.className = 'p-2 space-y-2';
+      if (artifact.videoMp4Url) {
+        const vid = document.createElement('video');
+        vid.src = artifact.videoMp4Url;
+        vid.controls = true;
+        vid.className = 'w-full rounded-xl border border-slate-200 mb-2';
+        wrap.appendChild(vid);
+      }
+      if (data.script) {
+        const scriptEl = document.createElement('pre');
+        scriptEl.className = 'text-xs bg-white p-3 rounded-xl border whitespace-pre-wrap';
+        scriptEl.textContent = data.script;
+        wrap.appendChild(scriptEl);
+      }
+      (data.scenes || []).forEach(scene => {
+        const div = document.createElement('div');
+        div.className = 'video-kit-scene';
+        div.innerHTML = `<strong>Scene ${scene.sceneNum}</strong> (${escapeHtml(scene.duration)})<br/>
+          Shot: ${escapeHtml(scene.shot)}<br/>
+          Lighting: ${escapeHtml(scene.lighting)}<br/>
+          On-screen: ${escapeHtml(scene.onScreenText)}<br/>
+          Audio: ${escapeHtml(scene.audio)}`;
+        wrap.appendChild(div);
+      });
+      container.appendChild(wrap);
+    }
+
+    function renderArtifactPreview(container, artifact) {
+      container.innerHTML = '';
+      const d = artifact.data;
+      if (artifact.artifactType === 'slides') {
+        renderSlideCarousel(container, d);
+      } else if (artifact.artifactType === 'table') {
+        renderDataTable(container, d);
+      } else if (artifact.artifactType === 'infographic') {
+        container.innerHTML = artifact.mode === 'parcellabels' ? buildParcelLabelsHtml(d) : buildInfographicHtml(d, artifact.heroImageDataUrl);
+      } else if (artifact.artifactType === 'video_kit') {
+        renderVideoKitView(container, artifact);
+      } else if (artifact.artifactType === 'report') {
+        const pre = document.createElement('div');
+        pre.className = 'chat-md text-xs p-3 bg-white rounded-xl border';
+        pre.innerHTML = typeof marked !== 'undefined' ? marked.parse(d.markdown || '') : escapeHtml(d.markdown || '');
+        container.appendChild(pre);
+      }
+    }
+
+    async function exportSlidesPptx(artifact) {
+      await loadExportLib('pptxgenjs');
+      const pptx = new PptxGenJS();
+      pptx.layout = 'LAYOUT_16x9';
+      pptx.author = 'DiaMatch AI';
+      pptx.title = artifact.title;
+      const slides = artifact.data.slides || [];
+      slides.forEach(s => {
+        const slide = pptx.addSlide();
+        slide.background = { color: '1E3A5F' };
+        slide.addText(s.title || '', { x: 0.5, y: 0.8, w: 9, h: 1, fontSize: 28, color: 'F5F0E8', fontFace: 'Georgia', bold: true });
+        if (s.bullets?.length) {
+          slide.addText(s.bullets.map(b => ({ text: b, options: { bullet: true, fontSize: 14, color: 'E2E8F0' } })), { x: 0.8, y: 2, w: 8.4, h: 4 });
+        }
+        if (s.speakerNotes) slide.addNotes(s.speakerNotes);
+      });
+      const fname = `${artifact.title.replace(/[^\w-]/g, '_')}.pptx`;
+      await pptx.writeFile({ fileName: fname });
+      showToast('PPTX downloaded');
+    }
+
+    async function exportReportPdf(artifact) {
+      await loadExportLib('html2pdf');
+      const wrap = document.createElement('div');
+      wrap.style.padding = '24px';
+      wrap.style.fontFamily = 'Inter, sans-serif';
+      wrap.style.fontSize = '12px';
+      wrap.innerHTML = typeof marked !== 'undefined' ? marked.parse(artifact.data.markdown || '') : escapeHtml(artifact.data.markdown || '');
+      await html2pdf().set({ margin: 10, filename: `${artifact.title.replace(/[^\w-]/g, '_')}.pdf` }).from(wrap).save();
+      showToast('PDF downloaded');
+    }
+
+    async function exportTableCsv(artifact) {
+      const { columns, rows } = artifact.data;
+      const lines = [columns.join(',')].concat(rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')));
+      downloadBlob(new Blob([lines.join('\n')], { type: 'text/csv' }), `${artifact.title.replace(/[^\w-]/g, '_')}.csv`);
+      showToast('CSV downloaded');
+    }
+
+    async function exportTableXlsx(artifact) {
+      await loadExportLib('xlsx');
+      const ws = XLSX.utils.aoa_to_sheet([artifact.data.columns, ...artifact.data.rows]);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Data');
+      XLSX.writeFile(wb, `${artifact.title.replace(/[^\w-]/g, '_')}.xlsx`);
+      showToast('XLSX downloaded');
+    }
+
+    async function exportInfographicPng(artifact) {
+      await loadExportLib('html2canvas');
+      const temp = document.createElement('div');
+      temp.style.position = 'fixed';
+      temp.style.left = '-9999px';
+      temp.innerHTML = artifact.mode === 'parcellabels' ? buildParcelLabelsHtml(artifact.data) : buildInfographicHtml(artifact.data, artifact.heroImageDataUrl);
+      document.body.appendChild(temp);
+      const root = temp.querySelector('#infographicExportRoot');
+      const canvas = await html2canvas(root, { scale: 2, backgroundColor: '#f8fafc' });
+      canvas.toBlob(blob => {
+        downloadBlob(blob, `${artifact.title.replace(/[^\w-]/g, '_')}.png`);
+        temp.remove();
+        showToast('PNG downloaded');
+      }, 'image/png');
+    }
+
+    function exportVideoKitJson(artifact) {
+      downloadBlob(new Blob([JSON.stringify(artifact.data, null, 2)], { type: 'application/json' }), `${artifact.title.replace(/[^\w-]/g, '_')}-kit.json`);
+      showToast('JSON downloaded');
+    }
+
+    function exportVideoKitSrt(artifact) {
+      const srt = artifact.data.srt || '';
+      downloadBlob(new Blob([srt], { type: 'text/plain' }), `${artifact.title.replace(/[^\w-]/g, '_')}.srt`);
+      showToast('SRT downloaded');
+    }
+
+    function exportVideoMp4(artifact) {
+      if (!artifact.videoMp4Blob) { showToast('No MP4 available', 'error'); return; }
+      downloadBlob(artifact.videoMp4Blob, `${artifact.title.replace(/[^\w-]/g, '_')}.mp4`);
+      showToast('MP4 downloaded');
+    }
+
+    async function exportArtifact(artifactId, format) {
+      const artifact = artifactStore[artifactId];
+      if (!artifact) return;
+      try {
+        if (format === 'pptx') await exportSlidesPptx(artifact);
+        else if (format === 'pdf') await exportReportPdf(artifact);
+        else if (format === 'csv') await exportTableCsv(artifact);
+        else if (format === 'xlsx') await exportTableXlsx(artifact);
+        else if (format === 'png') await exportInfographicPng(artifact);
+        else if (format === 'json') exportVideoKitJson(artifact);
+        else if (format === 'srt') exportVideoKitSrt(artifact);
+        else if (format === 'mp4') exportVideoMp4(artifact);
+      } catch (err) {
+        console.error(err);
+        showToast(`Export failed: ${err.message}`, 'error');
+      }
+    }
+
+    function getImageSourceForVeo() {
+      if (!selectedFilename) return null;
+      const doc = docTextStore[selectedFilename];
+      if (!doc) return null;
+      if (doc.type === 'image' && doc.base64) return { base64: doc.base64, mime: doc.mimeType || 'image/jpeg' };
+      if (doc.type === 'url' && (doc.mimeType || '').startsWith('image/')) return null;
+      return null;
+    }
+
+    async function tryGenerateVeoVideo(apiKey, prompt, imageSource) {
+      const models = ['veo-2.0-generate-001', 'veo-001'];
+      for (const model of models) {
+        try {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:predictLongRunning?key=${encodeURIComponent(apiKey)}`;
+          const instance = { prompt: prompt.slice(0, 500) };
+          if (imageSource) {
+            instance.image = { bytesBase64Encoded: imageSource.base64, mimeType: imageSource.mime };
+          }
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ instances: [instance] })
+          });
+          if (!res.ok) continue;
+          const op = await res.json();
+          const opName = op.name;
+          if (!opName) continue;
+          for (let i = 0; i < 30; i++) {
+            await new Promise(r => setTimeout(r, 4000));
+            const poll = await fetch(`https://generativelanguage.googleapis.com/v1beta/${opName}?key=${encodeURIComponent(apiKey)}`);
+            if (!poll.ok) break;
+            const status = await poll.json();
+            if (status.done) {
+              const vid = status.response?.generateVideoResponse?.generatedSamples?.[0]?.video?.uri
+                || status.response?.generatedVideos?.[0]?.video?.uri;
+              if (vid) {
+                const vidRes = await fetch(`${vid}${vid.includes('?') ? '&' : '?'}key=${encodeURIComponent(apiKey)}`);
+                if (vidRes.ok) return await vidRes.blob();
+              }
+              const b64 = status.response?.generateVideoResponse?.generatedSamples?.[0]?.video?.bytesBase64Encoded;
+              if (b64) return base64ToBlob(b64, 'video/mp4');
+              break;
+            }
+            if (status.error) break;
+          }
+        } catch (_) { /* try next model */ }
+      }
+      return null;
+    }
+
+    function exportVaultMasterCsv() {
+      if (!docOrder.length) { showToast('Vault is empty', 'error'); return; }
+      const cols = ['Filename', 'Type', 'Badge', 'Size', 'Preview'];
+      const rows = docOrder.map(f => {
+        const d = docTextStore[f];
+        return [f, d.type, d.badge, formatFileSize(d.fileSize || 0), (d.fullText || '').slice(0, 120).replace(/\n/g, ' ')];
+      });
+      const lines = [cols.join(',')].concat(rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')));
+      downloadBlob(new Blob([lines.join('\n')], { type: 'text/csv' }), `diamatch-vault-${Date.now()}.csv`);
+      showToast('Vault CSV exported');
+    }
+
+    function setLoadingLabel(mode) {
+      const labels = { slides: 'Generating deck…', report: 'Writing report…', datatable: 'Building table…', infographic: 'Designing infographic…', video: 'Creating video kit…', insurance: 'Writing letter…', rfq: 'Drafting email…', whatsapp: 'Writing blurb…', pricememo: 'Writing memo…', parcellabels: 'Building labels…', qcchecklist: 'Building checklist…' };
+      if (loadingLabel) loadingLabel.textContent = labels[mode] || 'Analyzing…';
+    }
+
+    function buildArtifactActionBar(artifactId, artifact) {
+      const bar = document.createElement('div');
+      bar.className = 'artifact-actions';
+      const addBtn = (label, fn) => {
+        const b = document.createElement('button');
+        b.textContent = label;
+        b.addEventListener('click', fn);
+        bar.appendChild(b);
+      };
+      addBtn('Open in Viewer', () => openArtifactInViewer(artifactId));
+      addBtn('Save to Vault', () => saveArtifactToVault(artifactId));
+      if (artifact.artifactType === 'slides') addBtn('Download PPTX', () => exportArtifact(artifactId, 'pptx'));
+      if (artifact.artifactType === 'report') addBtn('Download PDF', () => exportArtifact(artifactId, 'pdf'));
+      if (artifact.artifactType === 'table') {
+        addBtn('Download CSV', () => exportArtifact(artifactId, 'csv'));
+        addBtn('Download XLSX', () => exportArtifact(artifactId, 'xlsx'));
+      }
+      if (artifact.artifactType === 'infographic') addBtn('Download PNG', () => exportArtifact(artifactId, 'png'));
+      if (artifact.artifactType === 'video_kit') {
+        addBtn('Download SRT', () => exportArtifact(artifactId, 'srt'));
+        addBtn('Download JSON', () => exportArtifact(artifactId, 'json'));
+        if (artifact.videoMp4Blob) addBtn('Download MP4', () => exportArtifact(artifactId, 'mp4'));
+      }
+      return bar;
+    }
+
     // ─── Gemini API ───────────────────────────────────────────────────────────────
     async function callGemini(userQuestion, options = {}) {
       const apiKey = getApiKey();
@@ -1336,13 +2512,17 @@ When analyzing uploaded documents:
       const mode = options.mode || activeMode;
       const systemText = SYSTEM_PROMPT + (mode && MODE_SYSTEM_ADDENDUM[mode] ? MODE_SYSTEM_ADDENDUM[mode] : '');
 
+      const isJsonOutput = options.outputType === 'json';
+      const genConfig = {
+        temperature: mode === 'negotiation' || mode === 'marketing' || mode === 'passport' || STUDIO_ARTIFACT_TYPES[mode] ? 0.5 : 0.3,
+        maxOutputTokens: isJsonOutput || STUDIO_ARTIFACT_TYPES[mode] ? 8192 : 4096
+      };
+      if (isJsonOutput) genConfig.responseMimeType = 'application/json';
+
       const body = {
         systemInstruction: { parts: [{ text: systemText }] },
         contents,
-        generationConfig: {
-          temperature: mode === 'negotiation' || mode === 'marketing' || mode === 'passport' ? 0.7 : 0.3,
-          maxOutputTokens: 4096
-        }
+        generationConfig: genConfig
       };
 
       const models = ['gemini-2.5-flash', 'gemini-2.0-flash'];
@@ -1474,6 +2654,10 @@ When analyzing uploaded documents:
         content.innerHTML = renderMarkdownWithCitations(text);
         div.appendChild(content);
         attachCitationHandlers(content);
+        if (options.artifactId) {
+          const artifact = artifactStore[options.artifactId];
+          if (artifact) div.appendChild(buildArtifactActionBar(options.artifactId, artifact));
+        }
         if (options.copyable) {
           const copyBtn = document.createElement('button');
           copyBtn.className = 'copy-btn';
@@ -1500,16 +2684,50 @@ When analyzing uploaded documents:
       isLoading = true;
       sendBtn.disabled = true;
       loadingIndicator.classList.remove('hidden');
+      if (options.studio) setLoadingLabel(mode);
 
       try {
         const reply = await callGemini(question, options);
         if (reply) {
-          appendMessage('assistant', reply, {
+          let displayText = reply;
+          let artifactId = null;
+
+          if (options.studio && mode) {
+            const parsed = parseArtifactReply(reply, options.outputType || 'markdown');
+            const hasJsonArtifact = options.outputType === 'json' && parsed.data && (
+              parsed.data.slides || parsed.data.columns || parsed.data.stats || parsed.data.scenes || parsed.data.labels
+            );
+            const hasMdArtifact = options.outputType !== 'json' && parsed.data?.markdown;
+            if (hasJsonArtifact || hasMdArtifact) {
+              const artifact = createArtifact(mode, parsed.data, parsed.data.title);
+              artifactId = artifact.id;
+              displayText = options.outputType === 'json' ? (parsed.markdown || summarizeArtifactData(parsed.data)) : reply;
+
+              if (mode === 'video' && options.tryVeo) {
+                setLoadingLabel('video');
+                if (loadingLabel) loadingLabel.textContent = 'Rendering video (best-effort)…';
+                const imageSource = getImageSourceForVeo();
+                const veoPrompt = parsed.data.thumbnailPrompts?.[0] || parsed.data.script?.slice(0, 300) || question;
+                const mp4Blob = await tryGenerateVeoVideo(getApiKey(), veoPrompt, imageSource);
+                if (mp4Blob) {
+                  if (artifact.videoMp4Url) URL.revokeObjectURL(artifact.videoMp4Url);
+                  artifact.videoMp4Blob = mp4Blob;
+                  artifact.videoMp4Url = URL.createObjectURL(mp4Blob);
+                  displayText += '\n\n*MP4 preview generated — open in Viewer or Download MP4.*';
+                } else {
+                  showToast('Video kit ready. MP4 unavailable (API/model limits) — use production kit exports.', 'error');
+                }
+              }
+            }
+          }
+
+          appendMessage('assistant', displayText, {
             modeLabel,
-            copyable: options.copyable || mode === 'passport' || mode === 'marketing'
+            copyable: options.copyable || mode === 'passport' || mode === 'marketing' || mode === 'whatsapp' || mode === 'insurance' || mode === 'rfq' || mode === 'pricememo',
+            artifactId
           });
           chatHistory.push({ role: 'user', text: question });
-          chatHistory.push({ role: 'model', text: reply });
+          chatHistory.push({ role: 'model', text: displayText });
           if (chatHistory.length > MAX_HISTORY_TURNS * 2) {
             chatHistory = chatHistory.slice(-MAX_HISTORY_TURNS * 2);
           }
@@ -1522,23 +2740,31 @@ When analyzing uploaded documents:
         isLoading = false;
         sendBtn.disabled = false;
         loadingIndicator.classList.add('hidden');
+        if (loadingLabel) loadingLabel.textContent = 'Analyzing…';
       }
     }
 
     document.querySelectorAll('.feature-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        if (btn.dataset.vaultExport === 'true') {
+          exportVaultMasterCsv();
+          return;
+        }
         const prompt = btn.dataset.prompt;
         const mode = btn.dataset.mode || 'trade';
         const requireDocs = parseInt(btn.dataset.requireDocs || '0', 10);
         const useSelected = btn.dataset.useSelected === 'true';
         const copyable = btn.dataset.copyable === 'true';
+        const studio = btn.dataset.studio === 'true';
+        const outputType = btn.dataset.outputType || 'markdown';
+        const tryVeo = btn.dataset.tryVeo === 'true';
 
         if (useSelected && !selectedFilename) {
           showToast('Select a file or link in The Vault first', 'error');
           return;
         }
 
-        sendMessage(prompt, { mode, requireDocs, useSelected, copyable });
+        sendMessage(prompt, { mode, requireDocs, useSelected, copyable, studio, outputType, tryVeo });
       });
     });
 
@@ -1557,18 +2783,20 @@ When analyzing uploaded documents:
     });
 
     // ─── Init ───────────────────────────────────────────────────────────────────
-    document.getElementById('toggleVaultBtn')?.addEventListener('click', () => {
-      document.getElementById('vaultPanel').classList.toggle('mobile-open');
-      document.getElementById('viewerPanel').classList.remove('mobile-open');
-    });
-    document.getElementById('toggleViewerBtn')?.addEventListener('click', () => {
-      document.getElementById('viewerPanel').classList.toggle('mobile-open');
-      document.getElementById('vaultPanel').classList.remove('mobile-open');
-    });
-
+    initSplitPanes();
     renderVault();
     renderViewer();
     updateStatusDot();
+
+    if (!chatMessages.children.length) {
+      appendMessage('assistant', `Welcome to **DiaMatch AI** — your diamond trade intelligence assistant.
+
+Upload certificates, Rapaport sheets, photos, or paste links into **The Vault**. Select any source to preview it above, then ask questions in **The Chat Trader** below.
+
+Use **Studio** tools to generate slide decks, reports, data tables, infographics, and video kits — then open, save, or download them.
+
+Drag the handles between panels to resize the layout — your preferences are saved automatically.`);
+    }
   </script>
 </body>
 </html>
